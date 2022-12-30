@@ -1,0 +1,15 @@
+electronic:
+    css: li.zg-item-immersion
+    multiple: true
+    type: Text
+    children:
+        product_link:
+            css: .a-link-normal
+            type: Link
+        product_title:
+            css: 'li .p13n-sc-price'
+            type: Text
+        product_image_url:
+            css: img
+            type: Attribute
+            attribute: src
