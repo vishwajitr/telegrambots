@@ -1,0 +1,19 @@
+products:
+    css: 'div#all-deal-coupon.tabs-desc div.wcard.br5'
+    xpath: null
+    multiple: true
+    type: Text
+    children:
+        title:
+            css: a.click_coupon_discount_description
+            xpath: null
+            type: Text
+        desc:
+            css: 'div.f16 li:nth-of-type(1)'
+            xpath: null
+            type: Text
+        link:
+            css: a.coupon-btn
+            xpath: null
+            type: Attribute
+            attribute: data-href

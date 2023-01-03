@@ -4,8 +4,6 @@ https://www.geeksforgeeks.org/amazon-product-price-tracker-using-python/
 to install
 pip3 install requests selectorlib
 
-
-
 python test.py
 python scraper.py https://www.amazon.in/gp/bestsellers/automotive/ref=zg_bs_nav_0
 

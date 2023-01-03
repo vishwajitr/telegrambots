@@ -8,9 +8,8 @@ import csv
 #Comments
 # Stores and Store links Combinatio added
 
-xs = [['https://www.couponzguru.com/amazon/?utm_source=site&utm_medium=logo&utm_campaign=amazon', 'amazon'],
-['https://www.couponzguru.com/shopping-coupon/flipkart/?utm_source=site&utm_medium=logo&utm_campaign=flipkart', 'flipkart'],
-['https://www.couponzguru.com/ajio-coupons/?utm_source=site&utm_medium=logo&utm_campaign=ajio', 'ajio']]
+xs = [
+['https://www.desidime.com/stores/flipkart', 'ddflipkart', 'selectors__yml/selectors__desidime.yml', 'flipkart']]
 
 argparser = argparse.ArgumentParser()
 
@@ -21,9 +20,10 @@ for str, x in enumerate(xs):
     # store = input ("Enter Store :")
     store = x[1]
     # argparser.add_argument(url, help='Store URL')
+    merchant = x[3]
 
     # Create an Extractor by reading from the YAML file
-    e = Extractor.from_yaml_file('selectors__coupons.yml')
+    e = Extractor.from_yaml_file(x[2])
 
     #can be moved out
     user_agent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Safari/537.36 Edge/12.246'
@@ -60,7 +60,7 @@ for str, x in enumerate(xs):
     with open('stores/'+store+'/api__coupons.json') as json_file: 
         getdata = json.load(json_file) 
     for x in getdata['products']:
-        x['merchant'] = store
+        x['merchant'] = merchant
         if x['link'] :
                 # print( x['link'])
                 # print(requests.head(x['link']).headers['location'])
