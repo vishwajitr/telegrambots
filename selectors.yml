@@ -1,0 +1,274 @@
+name:
+    css: h1.h1_pro_head
+    xpath: null
+    type: Text
+price:
+    css: 'span.big_prc:nth-of-type(2)'
+    xpath: null
+    type: Text
+thumbnail:
+    css: 'li:nth-of-type(1) div.glry_img_wrp img[src="https://www.91-img.com/gallery_images_uploads/a/b/ab5ff4807ca8ddb6ac1fd4e59ebdb55947926783.jpg?w=0&h=901&q=80&c=1"]'
+    xpath: null
+    type: Image
+brand:
+    css: 'div.breadcrumb a:nth-of-type(2)'
+    xpath: null
+    type: Text
+category:
+    css: 'div.breadcrumb a:nth-of-type(1)'
+    xpath: null
+    type: Text
+key_specs:
+    css: 'ul.specs_ul div.hd_tlt'
+    xpath: null
+    multiple: true
+    type: Text
+key_points:
+    css: 'ul.for_list_icon li'
+    xpath: null
+    multiple: true
+    type: Text
+overview:
+    xpath: ""
+    type: Text
+    children:
+        ratings:
+            css: null
+            xpath: '//div[contains(concat(" ",normalize-space(@class)," ")," top_box ")][3]//span[contains(concat(" ",normalize-space(@class)," ")," ratpt ")]'
+            type: Text
+        sensors:
+            css: null
+            xpath: '//div[contains(concat(" ",normalize-space(@class)," ")," spec_box ")][12]//tr[2]//td[contains(concat(" ",normalize-space(@class)," ")," spec_des ")]'
+            type: Text
+        color:
+            xpath: ""
+            type: Text
+        device_manufacturer:
+            css: null
+            xpath: '//div[contains(concat(" ",normalize-space(@class)," ")," breadcrumb ")]//a[2]'
+            type: Text
+        product_name:
+            css: null
+            xpath: '//h1[contains(concat(" ",normalize-space(@class)," ")," h1_pro_head ")]'
+            type: Text
+        brand:
+            css: null
+            xpath: '//div[contains(concat(" ",normalize-space(@class)," ")," breadcrumb ")]//a[2]'
+            type: Text
+        operating_system:
+            css: null
+            xpath: '//div[contains(concat(" ",normalize-space(@class)," ")," spec_box ")][4]//tr[1]//td[contains(concat(" ",normalize-space(@class)," ")," spec_des ")]'
+            type: Text
+battery:
+    xpath: ""
+    type: Text
+    children:
+        capacity:
+            css: null
+            xpath: '//div[contains(concat(" ",normalize-space(@class)," ")," spec_box ")][8]//tr[1]//td[contains(concat(" ",normalize-space(@class)," ")," spec_des ")]'
+            type: Text
+        type:
+            css: null
+            xpath: '//div[contains(concat(" ",normalize-space(@class)," ")," spec_box ")][8]//tr[2]//td[contains(concat(" ",normalize-space(@class)," ")," spec_des ")]'
+            type: Text
+        removable:
+            css: null
+            xpath: '//div[contains(concat(" ",normalize-space(@class)," ")," spec_box ")][8]//tr[3]//td[contains(concat(" ",normalize-space(@class)," ")," spec_des ")]'
+            type: Text
+        wireless_charging:
+            css: null
+            xpath: '//div[contains(concat(" ",normalize-space(@class)," ")," spec_box ")][8]//tr[4]//td[contains(concat(" ",normalize-space(@class)," ")," spec_des ")]'
+            type: Text
+        quick_charging:
+            css: null
+            xpath: '//div[contains(concat(" ",normalize-space(@class)," ")," spec_box ")][8]//tr[5]//td[contains(concat(" ",normalize-space(@class)," ")," spec_des ")]'
+            type: Text
+        usb_type_C:
+            css: null
+            xpath: '//div[contains(concat(" ",normalize-space(@class)," ")," spec_box ")][8]//tr[6]//td[contains(concat(" ",normalize-space(@class)," ")," spec_des ")]'
+            type: Text
+storage:
+    xpath: ""
+    type: Text
+    children:
+        internal_memory:
+            css: null
+            xpath: '/html/body/div[8]/div[2]/div[7]/div[2]/div[2]/div[9]/table/tbody/tr[1]/td[2]'
+            type: Text
+        expandable_memory:
+            css: null
+            xpath: '//div[contains(concat(" ",normalize-space(@class)," ")," spec_box ")][9]//tr[2]//td[contains(concat(" ",normalize-space(@class)," ")," spec_des ")]'
+            type: Text
+        storage_type:
+            css: null
+            xpath: '//div[contains(concat(" ",normalize-space(@class)," ")," spec_box ")][9]//tr[3]//td[contains(concat(" ",normalize-space(@class)," ")," spec_des ")]'
+            type: Text
+multimedia:
+    xpath: ""
+    type: Text
+    children:
+        fm_radio:
+            css: null
+            xpath: '//div[contains(concat(" ",normalize-space(@class)," ")," spec_box ")][11]//tr[1]//td[contains(concat(" ",normalize-space(@class)," ")," spec_des ")]'
+            type: Text
+        loudspeaker:
+            css: null
+            xpath: '//div[contains(concat(" ",normalize-space(@class)," ")," spec_box ")][11]//tr[2]//td[contains(concat(" ",normalize-space(@class)," ")," spec_des ")]'
+            type: Text
+        audio_jack:
+            css: null
+            xpath: '//div[contains(concat(" ",normalize-space(@class)," ")," spec_box ")][11]//tr[3]//td[contains(concat(" ",normalize-space(@class)," ")," spec_des ")]'
+            type: Text
+        audio_features:
+            css: null
+            xpath: '//div[contains(concat(" ",normalize-space(@class)," ")," spec_box ")][11]//tr[4]//td[contains(concat(" ",normalize-space(@class)," ")," spec_des ")]'
+            type: Text
+sensors:
+    xpath: ""
+    type: Text
+    children:
+        other_sensors:
+            css: null
+            xpath: '//div[contains(concat(" ",normalize-space(@class)," ")," spec_box ")][12]//tr[2]//td[contains(concat(" ",normalize-space(@class)," ")," spec_des ")]'
+            type: Text
+        fingerprint_sensor:
+            css: null
+            xpath: '//td[normalize-space()="Fingerprint Sensor"]/following-sibling::*'
+            type: Text
+camera:
+    xpath: ""
+    type: Text
+    children:
+        maincamera:
+            xpath: ""
+            type: Text
+            children:
+                camera_setup:
+                    css: null
+                    xpath: '//td[normalize-space()="Camera Setup"]/following-sibling::*'
+                    type: Text
+                resolution:
+                    css: null
+                    xpath: '//td[normalize-space()="Resolution"]/following-sibling::*'
+                    type: Text
+                sensor:
+                    css: null
+                    xpath: '//td[normalize-space()="Sensor"]/following-sibling::*'
+                    type: Text
+                autofocus:
+                    css: null
+                    xpath: '//td[normalize-space()="Autofocus"]/following-sibling::*'
+                    type: Text
+                ois:
+                    css: null
+                    xpath: '//td[normalize-space()="OIS"]/following-sibling::*'
+                    type: Text
+                flash:
+                    css: null
+                    xpath: '//td[normalize-space()="OIS"]/following-sibling::*'
+                    type: Text
+                image_resolution:
+                    css: null
+                    xpath: '//td[normalize-space()="Image Resolution"]/following-sibling::*'
+                    type: Text
+                settings:
+                    css: null
+                    xpath: '//td[normalize-space()="Settings"]/following-sibling::*'
+                    type: Text
+                shooting_modes:
+                    css: null
+                    xpath: '//td[normalize-space()="Shooting Modes"]/following-sibling::*'
+                    type: Text
+                camera_features:
+                    css: null
+                    xpath: '//td[normalize-space()="Camera Features"]/following-sibling::*'
+                    type: Text
+                video_recording:
+                    css: null
+                    xpath: '//td[normalize-space()="Video Recording"]/following-sibling::*'
+                    type: Text
+        frontcamera:
+            xpath: ""
+            type: Text
+            children:
+                camera_setup:
+                    css: null
+                    xpath: '//td[normalize-space()="Camera Setup"]/following-sibling::*'
+                    type: Text
+                resolution:
+                    css: null
+                    xpath: '//td[normalize-space()="Resolution"]/following-sibling::*'
+                    type: Text
+                autofocus:
+                    css: null
+                    xpath: '//td[normalize-space()="Autofocus"]/following-sibling::*'
+                    type: Text
+                video_recording:
+                    css: null
+                     xpath: '//td[normalize-space()="Video Recording"]/following-sibling::*'
+                    type: Text
+                flash:
+                    css: null
+                    xpath: '//td[normalize-space()="Flash"]/following-sibling::*'
+                    type: Text
+connectivity:
+    css: 'div.spec_box:nth-of-type(10)'
+    xpath: null
+    type: Text
+    children:
+        sim_slots:
+            css: null
+            xpath: '//td[normalize-space()="SIM Slot(s)"]/following-sibling::*'
+            type: Text
+        sim_size:
+            css: null
+            xpath: '//td[normalize-space()="SIM Size"]/following-sibling::*'
+            type: Text
+        network_support:
+            css: null
+            xpath: '//td[normalize-space()="Network Support"]/following-sibling::*'
+            type: Text
+        volte:
+            css: null
+            xpath: '//td[normalize-space()="VoLTE"]/following-sibling::*'
+            type: Text
+        sim1:
+            css: null
+            xpath: '//td[normalize-space()="SIM 1"]/following-sibling::*'
+            type: Text
+        sim2:
+            css: null
+            xpath: '//td[normalize-space()="SIM 2"]/following-sibling::*'
+            type: Text
+        sar_value:
+            css: null
+            xpath: '//td[normalize-space()="SAR Value"]/following-sibling::*'
+            type: Text
+        wifi:
+            css: null
+            xpath: '//td[normalize-space()="Wi-Fi"]/following-sibling::*'
+            type: Text
+        wifi_features:
+            css: null
+            xpath: '//td[normalize-space()="Wi-Fi Features"]/following-sibling::*'
+            type: Text
+        wifi_calling:
+            css: null
+            xpath: '//td[normalize-space()="Wi-Fi Calling"]/following-sibling::*'
+            type: Text
+        bluetooth:
+            css: null
+            xpath: '//td[normalize-space()="Bluetooth"]/following-sibling::*'
+            type: Text
+        gps:
+            css: null
+            xpath: '//td[normalize-space()="GPS"]/following-sibling::*'
+            type: Text
+        nfc:
+            css: null
+            xpath: '//td[normalize-space()="NFC"]/following-sibling::*'
+            type: Text
+        usb_connectivity:
+            css: null
+            xpath: '//td[normalize-space()="USB Connectivity"]/following-sibling::*'
+            type: Text

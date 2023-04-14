@@ -1,0 +1,269 @@
+name:
+    css: h1.h1_pro_head
+    xpath: null
+    type: Text
+price:
+    css: 'span.big_prc:nth-of-type(2)'
+    xpath: null
+    type: Text
+thumbnail:
+    css: 'li:nth-of-type(1) div.glry_img_wrp img[src="https://www.91-img.com/gallery_images_uploads/a/b/ab5ff4807ca8ddb6ac1fd4e59ebdb55947926783.jpg?w=0&h=901&q=80&c=1"]'
+    xpath: null
+    type: Image
+brand:
+    css: 'div.breadcrumb a:nth-of-type(2)'
+    xpath: null
+    type: Text
+category:
+    css: 'div.breadcrumb a:nth-of-type(1)'
+    xpath: null
+    type: Text
+key_specs:
+    css: 'ul.specs_ul div.hd_tlt'
+    xpath: null
+    multiple: true
+    type: Text
+key_points:
+    css: 'ul.for_list_icon li'
+    xpath: null
+    multiple: true
+    type: Text
+overview:
+    xpath: ""
+    type: Text
+    children:
+        ratings:
+            css: null
+            xpath: '//div[contains(concat(" ",normalize-space(@class)," ")," top_box ")][3]//span[contains(concat(" ",normalize-space(@class)," ")," ratpt ")]'
+            type: Text
+        sensors:
+            css: null
+            xpath: '//div[contains(concat(" ",normalize-space(@class)," ")," spec_box ")][12]//tr[2]//td[contains(concat(" ",normalize-space(@class)," ")," spec_des ")]'
+            type: Text
+        color:
+            xpath: ""
+            type: Text
+        device_manufacturer:
+            css: null
+            xpath: '//div[contains(concat(" ",normalize-space(@class)," ")," breadcrumb ")]//a[2]'
+            type: Text
+        product_name:
+            css: null
+            xpath: '//h1[contains(concat(" ",normalize-space(@class)," ")," h1_pro_head ")]'
+            type: Text
+        brand:
+            css: null
+            xpath: '//div[contains(concat(" ",normalize-space(@class)," ")," breadcrumb ")]//a[2]'
+            type: Text
+        operating_system:
+            css: null
+            xpath: '//div[contains(concat(" ",normalize-space(@class)," ")," spec_box ")][4]//tr[1]//td[contains(concat(" ",normalize-space(@class)," ")," spec_des ")]'
+            type: Text
+battery:
+    xpath: ""
+    type: Text
+    children:
+        capacity:
+            css: null
+            xpath: '//div[contains(concat(" ",normalize-space(@class)," ")," spec_box ")][8]//tr[1]//td[contains(concat(" ",normalize-space(@class)," ")," spec_des ")]'
+            type: Text
+        type:
+            css: null
+            xpath: '//div[contains(concat(" ",normalize-space(@class)," ")," spec_box ")][8]//tr[2]//td[contains(concat(" ",normalize-space(@class)," ")," spec_des ")]'
+            type: Text
+        removable:
+            css: null
+            xpath: '//div[contains(concat(" ",normalize-space(@class)," ")," spec_box ")][8]//tr[3]//td[contains(concat(" ",normalize-space(@class)," ")," spec_des ")]'
+            type: Text
+        wireless_charging:
+            css: null
+            xpath: '//div[contains(concat(" ",normalize-space(@class)," ")," spec_box ")][8]//tr[4]//td[contains(concat(" ",normalize-space(@class)," ")," spec_des ")]'
+            type: Text
+        quick_charging:
+            css: null
+            xpath: '//div[contains(concat(" ",normalize-space(@class)," ")," spec_box ")][8]//tr[5]//td[contains(concat(" ",normalize-space(@class)," ")," spec_des ")]'
+            type: Text
+        usb_type_C:
+            css: null
+            xpath: '//div[contains(concat(" ",normalize-space(@class)," ")," spec_box ")][8]//tr[6]//td[contains(concat(" ",normalize-space(@class)," ")," spec_des ")]'
+            type: Text
+storage:
+    xpath: ""
+    type: Text
+    children:
+        internal_memory:
+            css: null
+            xpath: '/html/body/div[8]/div[2]/div[7]/div[2]/div[2]/div[9]/table/tbody/tr[1]/td[2]'
+            type: Text
+        expandable_memory:
+            css: null
+            xpath: '//div[contains(concat(" ",normalize-space(@class)," ")," spec_box ")][9]//tr[2]//td[contains(concat(" ",normalize-space(@class)," ")," spec_des ")]'
+            type: Text
+        storage_type:
+            css: null
+            xpath: '//div[contains(concat(" ",normalize-space(@class)," ")," spec_box ")][9]//tr[3]//td[contains(concat(" ",normalize-space(@class)," ")," spec_des ")]'
+            type: Text
+multimedia:
+    xpath: ""
+    type: Text
+    children:
+        fm_radio:
+            css: null
+            xpath: '//div[contains(concat(" ",normalize-space(@class)," ")," spec_box ")][11]//tr[1]//td[contains(concat(" ",normalize-space(@class)," ")," spec_des ")]'
+            type: Text
+        loudspeaker:
+            css: null
+            xpath: '//div[contains(concat(" ",normalize-space(@class)," ")," spec_box ")][11]//tr[2]//td[contains(concat(" ",normalize-space(@class)," ")," spec_des ")]'
+            type: Text
+        audio_jack:
+            css: null
+            xpath: '//div[contains(concat(" ",normalize-space(@class)," ")," spec_box ")][11]//tr[3]//td[contains(concat(" ",normalize-space(@class)," ")," spec_des ")]'
+            type: Text
+        audio_features:
+            css: null
+            xpath: '//div[contains(concat(" ",normalize-space(@class)," ")," spec_box ")][11]//tr[4]//td[contains(concat(" ",normalize-space(@class)," ")," spec_des ")]'
+            type: Text
+sensors:
+    xpath: ""
+    type: Text
+    children:
+        fingerprint_sensor:
+            css: null
+            xpath: '//div[contains(concat(" ",normalize-space(@class)," ")," spec_box ")][12]//tr[1]//td[contains(concat(" ",normalize-space(@class)," ")," spec_des ")]'
+            type: Text
+        other_sensors:
+            css: null
+            xpath: '//div[contains(concat(" ",normalize-space(@class)," ")," spec_box ")][12]//tr[2]//td[contains(concat(" ",normalize-space(@class)," ")," spec_des ")]'
+            type: Text
+camera:
+    xpath: ""
+    type: Text
+    children:
+        maincamera:
+            xpath: ""
+            type: Text
+            children:
+                camera_setup:
+                    css: null
+                    xpath: '//div[contains(concat(" ",normalize-space(@class)," ")," spec_box ")][7]//tr[2]//td[contains(concat(" ",normalize-space(@class)," ")," spec_des ")]'
+                    type: Text
+                resolution:
+                    css: null
+                    xpath: '//div[contains(concat(" ",normalize-space(@class)," ")," spec_box ")][7]//tr[3]//td[contains(concat(" ",normalize-space(@class)," ")," spec_des ")]'
+                    type: Text
+                sensor:
+                    css: null
+                    xpath: '//div[contains(concat(" ",normalize-space(@class)," ")," spec_box ")][7]//tr[4]//td[contains(concat(" ",normalize-space(@class)," ")," spec_des ")]'
+                    type: Text
+                autofocus:
+                    css: null
+                    xpath: '//div[contains(concat(" ",normalize-space(@class)," ")," spec_box ")][7]//tr[5]//td[contains(concat(" ",normalize-space(@class)," ")," spec_des ")]'
+                    type: Text
+                ois:
+                    css: null
+                    xpath: '//*[@id="spec_response"]/div[2]/div[7]/table/tbody/tr[5]/td[2]'
+                    type: Text
+                flash:
+                    css: null
+                    xpath: '//*[@id="spec_response"]/div[2]/div[7]/table/tbody/tr[7]/td[2]'
+                    type: Text
+                image_resolution:
+                    css: null
+                    xpath: '//*[@id="spec_response"]/div[2]/div[7]/table/tbody/tr[8]/td[2]'
+                    type: Text
+                settings:
+                    css: null
+                    xpath: '//div[contains(concat(" ",normalize-space(@class)," ")," spec_box ")][7]//tr[9]//td[contains(concat(" ",normalize-space(@class)," ")," spec_des ")]'
+                    type: Text
+                shooting_modes:
+                    css: null
+                    xpath: '//*[@id="spec_response"]/div[2]/div[7]/table/tbody/tr[9]/td[2]'
+                    type: Text
+                camera_features:
+                    css: null
+                    xpath: '//*[@id="spec_response"]/div[2]/div[7]/table/tbody/tr[10]/td[2]'
+                    type: Text
+                video_recording:
+                    css: null
+                    xpath: '//*[@id="spec_response"]/div[2]/div[7]/table/tbody/tr[11]/td[2]'
+                    type: Text
+        frontcamera:
+            xpath: ""
+            type: Text
+            children:
+                camera_setup:
+                    css: null
+                    xpath: '//tr[14]//td[contains(concat(" ",normalize-space(@class)," ")," spec_des ")]'
+                    type: Text
+                resolution:
+                    css: null
+                    xpath: '//tr[15]//td[contains(concat(" ",normalize-space(@class)," ")," spec_des ")]'
+                    type: Text
+                autofocus:
+                    css: null
+                    xpath: '//tr[15]//td[contains(concat(" ",normalize-space(@class)," ")," spec_des ")]'
+                    type: Text
+                video_recording:
+                    css: null
+                    xpath: '//tr[17]//td[contains(concat(" ",normalize-space(@class)," ")," spec_des ")]'
+                    type: Text
+                flash:
+                    css: null
+                    xpath: '//tr[16]//td[contains(concat(" ",normalize-space(@class)," ")," spec_des ")]'
+                    type: Text
+connectivity:
+    xpath: ""
+    type: Text
+    children:
+        sim_slots:
+            css: null
+            xpath: '//div[contains(concat(" ",normalize-space(@class)," ")," spec_box ")][10]//tr[1]//td[contains(concat(" ",normalize-space(@class)," ")," spec_des ")]'
+            type: Text
+        sim_size:
+            css: null
+            xpath: '//div[contains(concat(" ",normalize-space(@class)," ")," spec_box ")][10]//tr[2]//td[contains(concat(" ",normalize-space(@class)," ")," spec_des ")]'
+            type: Text
+        network_support:
+            css: null
+            xpath: '//div[contains(concat(" ",normalize-space(@class)," ")," spec_box ")][10]//tr[3]//td[contains(concat(" ",normalize-space(@class)," ")," spec_des ")]'
+            type: Text
+        volte:
+            css: null
+            xpath: '//div[contains(concat(" ",normalize-space(@class)," ")," spec_box ")][10]//tr[4]//td[contains(concat(" ",normalize-space(@class)," ")," spec_des ")]'
+            type: Text
+        sim1:
+            css: null
+            xpath: '//div[contains(concat(" ",normalize-space(@class)," ")," spec_box ")][10]//tr[5]//td[contains(concat(" ",normalize-space(@class)," ")," spec_des ")]'
+            type: Text
+        sim2:
+            css: null
+            xpath: '//div[contains(concat(" ",normalize-space(@class)," ")," spec_box ")][10]//tr[6]//td[contains(concat(" ",normalize-space(@class)," ")," spec_des ")]'
+            type: Text
+        sar_value:
+            css: null
+            xpath: '//div[contains(concat(" ",normalize-space(@class)," ")," spec_box ")][10]//tr[7]//td[contains(concat(" ",normalize-space(@class)," ")," spec_des ")]'
+            type: Text
+        wifi:
+            css: null
+            xpath: '//div[contains(concat(" ",normalize-space(@class)," ")," spec_box ")][10]//tr[8]//td[contains(concat(" ",normalize-space(@class)," ")," spec_des ")]'
+            type: Text
+        wifi_features:
+            css: null
+            xpath: '//div[contains(concat(" ",normalize-space(@class)," ")," spec_box ")][10]//tr[9]//td[contains(concat(" ",normalize-space(@class)," ")," spec_des ")]'
+            type: Text
+        wifi_calling:
+            css: null
+            xpath: '//div[contains(concat(" ",normalize-space(@class)," ")," spec_box ")][10]//tr[10]//td[contains(concat(" ",normalize-space(@class)," ")," spec_des ")]'
+            type: Text
+        bluetooth:
+            css: null
+            xpath: '//div[contains(concat(" ",normalize-space(@class)," ")," spec_box ")][10]//tr[11]//td[contains(concat(" ",normalize-space(@class)," ")," spec_des ")]'
+            type: Text
+        gps:
+            css: null
+            xpath: '//div[contains(concat(" ",normalize-space(@class)," ")," spec_box ")][10]//tr[12]//td[contains(concat(" ",normalize-space(@class)," ")," spec_des ")]'
+            type: Text
+        nfc:
+            css: null
+            xpath: '//tr[13]//td[contains(concat(" ",normalize-space(@class)," ")," spec_des ")]'
+            type: Text

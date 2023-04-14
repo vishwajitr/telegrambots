@@ -8,8 +8,16 @@ import csv
 #Comments
 # Stores and Store links Combinatio added
 
+#['https://www.amazon.in/gp/bestsellers/automotive/ref=zg_bs_nav_0', 'amazon-bs', 'selectors__yml/selectors__amazon.yml', 'amazon','https://www.amazon.in', 'amazon']
+#[url, foldername, ymlfilepath, merchantname, baseurl, datasource]
+
 xs = [
-['https://www.desidime.com/stores/flipkart', 'ddflipkart', 'selectors__yml/selectors__desidime.yml', 'flipkart']]
+# ['https://www.amazon.in/gp/bestsellers/automotive/ref=zg_bs_nav_0', 'amazon-bs', 'selectors__yml/selectors__amazon.yml', 'amazon','https://www.amazon.in', 'amazon'],
+['https://www.couponzguru.com/amazon/?utm_source=site&utm_medium=logo&utm_campaign=amazon', 'cgamazon', 'selectors__yml/selectors__coupons.yml', 'amazon','https://www.amazon.in', 'amazon'],
+['https://www.desidime.com/stores/amazon-india', 'ddamazon', 'selectors__yml/selectors__desidime.yml', 'amazon','https://www.amazon.in', 'amazon'],
+['https://www.couponzguru.com/shopping-coupon/flipkart/?utm_source=site&utm_medium=logo&utm_campaign=flipkart', 'cgflipkart', 'selectors__yml/selectors__coupons.yml', 'flipkart','https://www.flipkart.com', 'flipkart'],
+['https://www.desidime.com/stores/flipkart', 'ddflipkart', 'selectors__yml/selectors__desidime.yml', 'flipkart','https://www.flipkart.com', 'flipkart']
+]
 
 argparser = argparse.ArgumentParser()
 
@@ -21,6 +29,8 @@ for str, x in enumerate(xs):
     store = x[1]
     # argparser.add_argument(url, help='Store URL')
     merchant = x[3]
+
+    data__source = x[5]
 
     # Create an Extractor by reading from the YAML file
     e = Extractor.from_yaml_file(x[2])
@@ -62,7 +72,9 @@ for str, x in enumerate(xs):
     for x in getdata['products']:
         x['merchant'] = merchant
         if x['link'] :
-                # print( x['link'])
+
+                # if data__source == 'amazon':
+                #     x['link'] = 'https://www.amazon.in' + x['link']
                 # print(requests.head(x['link']).headers['location'])
                 # x['link'] = requests.head(x['link']).headers['location']
                 if  requests.head(x['link']) :
@@ -112,7 +124,7 @@ for str, x in enumerate(xs):
                 # print(requests.head(x['link']).headers)
                 if  x['link'] :
                     url = x['link']
-                    params = {'tag':'offerscode-21', 'affid': 'vishwajit8'}
+                    params = {'tag':'offerscodes-21', 'affid': 'vishwajit8'}
 
                     url_parts = list(urllib.parse.urlparse(url))
                     query = dict(urllib.parse.parse_qsl(url_parts[4]))

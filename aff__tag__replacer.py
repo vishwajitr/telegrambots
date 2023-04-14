@@ -17,7 +17,7 @@ for x in getdata:
             # print(requests.head(x['link']).headers)
             if  x['link'] :
                 url = x['link']
-                params = {'tag':'offerscode-21', 'affid': 'vishwajit8'}
+                params = {'tag':'offerscodes-21', 'affid': 'vishwajit8'}
 
                 url_parts = list(urllib.parse.urlparse(url))
                 query = dict(urllib.parse.parse_qsl(url_parts[4]))
