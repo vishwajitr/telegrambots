@@ -77,7 +77,6 @@ for str, x in enumerate(xs):
         if(getdata['products']):
             for x in getdata['products']:
                 x['merchant'] = merchant
-                x['link'] = 'https://amzn.to/3oz0ZZK?tag=offerscodes-21&affid=vishwajit8'
                 
                 if x['link'] :
                     if  requests.head(x['link']) :
@@ -102,7 +101,7 @@ for str, x in enumerate(xs):
                     # print(requests.head(x['link']).headers)
                     if  x['link'] :
                         url = x['link']
-                        params = {'tag':'offerscodes-21', 'affid': 'vishwajit8'}
+                        params = {'tag':'offerscode07-21', 'affid': 'vishwajit8'}
 
                         url_parts = list(urllib.parse.urlparse(url))
                         query = dict(urllib.parse.parse_qsl(url_parts[4]))
