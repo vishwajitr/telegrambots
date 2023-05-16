@@ -1,5 +1,5 @@
 products:
-    css: 'div#all-deal-coupon.tabs-desc div.wcard.br5'
+    css: 'section:nth-of-type(1) div.deal_item div.wcard'
     xpath: null
     multiple: true
     type: Text

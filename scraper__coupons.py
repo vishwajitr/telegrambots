@@ -22,7 +22,9 @@ xs = [
 argparser = argparse.ArgumentParser()
 
 # Loop all xs array 
+
 for str, x in enumerate(xs):
+    
     # url = input ("Enter url :")
     url = x[0]
     # store = input ("Enter Store :")
@@ -44,6 +46,7 @@ for str, x in enumerate(xs):
     r = requests.get(url, headers=headers)
     # Pass the HTML of the page and create 
     data = e.extract(r.text)
+    
     # Print the data 
     # print(json.dumps(data, indent=True))
     # with open('api.json', 'w') as outfile:
@@ -65,75 +68,50 @@ for str, x in enumerate(xs):
     #dump data to store api files        
     with open('stores/'+store+'/api__coupons.json', 'w') as outfile:
         json.dump(data, outfile)    
-
+    
     #get data from store api files and santise links  
+    
+    
     with open('stores/'+store+'/api__coupons.json') as json_file: 
         getdata = json.load(json_file) 
-    for x in getdata['products']:
-        x['merchant'] = merchant
-        if x['link'] :
-
-                # if data__source == 'amazon':
-                #     x['link'] = 'https://www.amazon.in' + x['link']
-                # print(requests.head(x['link']).headers['location'])
-                # x['link'] = requests.head(x['link']).headers['location']
-                if  requests.head(x['link']) :
-                    if  requests.head(x['link']).headers['Location'] :
-                        x['link'] = requests.head(x['link']).headers['Location']
-                        print("true")
-                else : 
-                    x['link'] = x['link']
-
+        if(getdata['products']):
+            for x in getdata['products']:
+                x['merchant'] = merchant
+                x['link'] = 'https://amzn.to/3oz0ZZK?tag=offerscodes-21&affid=vishwajit8'
+                
+                if x['link'] :
+                    if  requests.head(x['link']) :
+                        if 'Location' in requests.head(x['link']).headers or 'location' not in requests.head(x['link']).headers:
+                            x['link'] = requests.head(x['link']).headers.get('Location') or requests.head(x['link']).headers.get('location')
+                            print("true")
+                    else : 
+                        x['link'] = x['link']                
     with open('stores/'+store+'/api__coupons.json', 'w') as outfile:
         json.dump(getdata['products'], outfile)    
 
-    print("First Time Data Sanitized")
-
-
-    # with open('stores/'+store+'/api__coupons.json') as json_file: 
-    #     getdata = json.load(json_file)     
-    # for x in getdata:
-    #     if x['link'] :
-    #             # print( x['link'])
-    #             # print(requests.head(x['link']).headers)
-    #             if  requests.head(x['link']) :
-    #                 if  requests.head(x['link']).headers['Location'] :
-    #                     x['link'] = requests.head(x['link']).headers['Location']
-    #                     print("true")
-    #             else : 
-    #                   x['link'] = x['link']
-
-    # with open('stores/'+store+'/api__coupons.json', 'w') as outfile:
-    #     json.dump(getdata, outfile)    
-
-    # print("Second Time Data Sanitized")
-
-    #csv  not working
-    # fieldnames = ['name', 'description', 'link']
-    # with open('api__coupons.csv', 'w', encoding='UTF8', newline='') as f:
-    #     writer = csv.DictWriter(f, fieldnames=fieldnames)
-    #     writer.writeheader()
-    #     writer.writerows(getdata)    
+    print("Data Sanitized")
+  
 
     #get data from store api files and santise links and append affiliate ids
     with open('stores/'+store+'/api__coupons.json') as json_file: 
-        getdata = json.load(json_file)     
-    for x in getdata:
-        if x['link'] :
-                # print( x['link'])
-                # print(requests.head(x['link']).headers)
-                if  x['link'] :
-                    url = x['link']
-                    params = {'tag':'offerscodes-21', 'affid': 'vishwajit8'}
+        getdata = json.load(json_file)    
+    if(getdata):     
+        for x in getdata:
+            if x['link'] :
+                    # print( x['link'])
+                    # print(requests.head(x['link']).headers)
+                    if  x['link'] :
+                        url = x['link']
+                        params = {'tag':'offerscodes-21', 'affid': 'vishwajit8'}
 
-                    url_parts = list(urllib.parse.urlparse(url))
-                    query = dict(urllib.parse.parse_qsl(url_parts[4]))
-                    query.update(params)
+                        url_parts = list(urllib.parse.urlparse(url))
+                        query = dict(urllib.parse.parse_qsl(url_parts[4]))
+                        query.update(params)
 
-                    url_parts[4] = urllib.parse.urlencode(query)
+                        url_parts[4] = urllib.parse.urlencode(query)
 
-                    print(urllib.parse.urlunparse(url_parts))
-                    x['link'] = urllib.parse.urlunparse(url_parts)
+                        print(urllib.parse.urlunparse(url_parts))
+                        x['link'] = urllib.parse.urlunparse(url_parts)
 
     with open('stores/'+store+'/api__coupons.json', 'w') as outfile:
         json.dump(getdata, outfile)    
