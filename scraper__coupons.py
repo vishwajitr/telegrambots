@@ -13,10 +13,10 @@ import csv
 
 xs = [
 # ['https://www.amazon.in/gp/bestsellers/automotive/ref=zg_bs_nav_0', 'amazon-bs', 'selectors__yml/selectors__amazon.yml', 'amazon','https://www.amazon.in', 'amazon'],
-['https://www.couponzguru.com/amazon/?utm_source=site&utm_medium=logo&utm_campaign=amazon', 'cgamazon', 'selectors__yml/selectors__coupons.yml', 'amazon','https://www.amazon.in', 'amazon'],
-['https://www.desidime.com/stores/amazon-india', 'ddamazon', 'selectors__yml/selectors__desidime.yml', 'amazon','https://www.amazon.in', 'amazon'],
-['https://www.couponzguru.com/shopping-coupon/flipkart/?utm_source=site&utm_medium=logo&utm_campaign=flipkart', 'cgflipkart', 'selectors__yml/selectors__coupons.yml', 'flipkart','https://www.flipkart.com', 'flipkart'],
-['https://www.desidime.com/stores/flipkart', 'ddflipkart', 'selectors__yml/selectors__desidime.yml', 'flipkart','https://www.flipkart.com', 'flipkart']
+['http://www.couponzguru.com/amazon/?utm_source=site&utm_medium=logo&utm_campaign=amazon', 'cgamazon', 'selectors__yml/selectors__coupons.yml', 'amazon','https://www.amazon.in', 'amazon'],
+['http://www.desidime.com/stores/amazon-india', 'ddamazon', 'selectors__yml/selectors__desidime.yml', 'amazon','https://www.amazon.in', 'amazon'],
+['http://www.couponzguru.com/shopping-coupon/flipkart/?utm_source=site&utm_medium=logo&utm_campaign=flipkart', 'cgflipkart', 'selectors__yml/selectors__coupons.yml', 'flipkart','https://www.flipkart.com', 'flipkart'],
+['http://www.desidime.com/stores/flipkart', 'ddflipkart', 'selectors__yml/selectors__desidime.yml', 'flipkart','https://www.flipkart.com', 'flipkart']
 ]
 
 argparser = argparse.ArgumentParser()
