@@ -79,12 +79,9 @@ for str, x in enumerate(xs):
                 x['merchant'] = merchant
                 
                 if x['link'] :
-                    if  requests.head(x['link']) :
-                        if 'Location' in requests.head(x['link']).headers or 'location' not in requests.head(x['link']).headers:
-                            x['link'] = requests.head(x['link']).headers.get('Location') or requests.head(x['link']).headers.get('location')
-                            print("true")
-                    else : 
-                        x['link'] = x['link']                
+                    response = requests.head(x['link'], allow_redirects=True)
+                    x['link'] = response.url
+                    print("true")
     with open('stores/'+store+'/api__coupons.json', 'w') as outfile:
         json.dump(getdata['products'], outfile)    
 
