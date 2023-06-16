@@ -46,4 +46,5 @@ electronic:
             css: img
             type: Attribute
             attribute: src
-
+            
+scp -r crawler/ OffersApp3:/home/ubuntu
