@@ -1,0 +1,5 @@
+2023-12-13 17:43:06,356 - INFO - Script started at 2023-12-13 17:43:06.356342 - Line 157
+2023-12-13 17:43:06,356 - INFO - Execution started - Line 148
+2023-12-13 17:43:06,356 - INFO - selectors__yml/selectors__coupons.yml - Line 30
+2023-12-13 17:43:16,866 - ERROR - Execution failed: name 'unicode' is not defined - Line 153
+2023-12-13 17:43:16,867 - INFO - Script ended at 2023-12-13 17:43:16.867476 - Line 160

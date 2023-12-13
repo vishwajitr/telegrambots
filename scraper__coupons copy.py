@@ -10,33 +10,25 @@ from datetime import datetime
 
 
 
-
 # Configure logging
 logging.basicConfig(filename='execution_log.log', level=logging.INFO,
-                       format='%(asctime)s - %(levelname)s - %(message)s - Line %(lineno)d')
-
-# logging.basicConfig(filename='/home/ubuntu/crawler/execution_log.log', level=logging.INFO,
-#                        format='%(asctime)s - %(levelname)s - %(message)s - Line %(lineno)d')
+                    format='%(asctime)s - %(levelname)s - %(message)s')
 
 def scrape_process():
     #Comments
     # Stores and Store links Combinatio added
 
-    #['https://www.amazon.in/gp/bestsellers/automotive/ref=zg_bs_nav_0', 'amazon-bs', rootPath+'selectors__yml/selectors__amazon.yml', 'amazon','https://www.amazon.in', 'amazon']
+    #['https://www.amazon.in/gp/bestsellers/automotive/ref=zg_bs_nav_0', 'amazon-bs', 'selectors__yml/selectors__amazon.yml', 'amazon','https://www.amazon.in', 'amazon']
     #[url, foldername, ymlfilepath, merchantname, baseurl, datasource]
 
-    # rootPath = "/home/ubuntu/crawler/"
-    rootPath = ""
-    logging.info('selectors__yml/selectors__coupons.yml')
     xs = [
-    # ['https://www.amazon.in/gp/bestsellers/automotive/ref=zg_bs_nav_0', 'amazon-bs', rootPath+'selectors__yml/selectors__amazon.yml', 'amazon','https://www.amazon.in', 'amazon'],
+    # ['https://www.amazon.in/gp/bestsellers/automotive/ref=zg_bs_nav_0', 'amazon-bs', 'selectors__yml/selectors__amazon.yml', 'amazon','https://www.amazon.in', 'amazon'],
     # ['http://www.couponzguru.com/amazon/?utm_source=site&utm_medium=logo&utm_campaign=amazon', 'cgamazon', 'selectors__yml/selectors__coupons.yml', 'amazon','https://www.amazon.in', 'amazon'],
-    ['http://www.desidime.com/stores/amazon-india', 'ddamazon', 'selectors__yml/selectors__desidime.yml', 'amazon','https://www.amazon.in', 'amazon'],
+    # ['http://www.desidime.com/stores/amazon-india', 'ddamazon', 'selectors__yml/selectors__desidime.yml', 'amazon','https://www.amazon.in', 'amazon'],
     # ['http://www.couponzguru.com/shopping-coupon/flipkart/?utm_source=site&utm_medium=logo&utm_campaign=flipkart', 'cgflipkart', 'selectors__yml/selectors__coupons.yml', 'flipkart','https://www.flipkart.com', 'flipkart'],
-    # ['http://www.desidime.com/stores/flipkart', 'ddflipkart', 'selectors__yml/selectors__desidime.yml', 'flipkart','https://www.flipkart.com', 'flipkart']
+    ['http://www.desidime.com/stores/flipkart', 'ddflipkart', 'selectors__yml/selectors__desidime.yml', 'flipkart','https://www.flipkart.com', 'flipkart']
     ]
 
-    # logging.info(xs)
     argparser = argparse.ArgumentParser()
 
     # Loop all xs array 
@@ -57,8 +49,7 @@ def scrape_process():
         data__source = x[5]
 
         # Create an Extractor by reading from the YAML file
-        e = Extractor.from_yaml_file(rootPath+x[2])
-        
+        e = Extractor.from_yaml_file(x[2])
 
         #can be moved out
         user_agent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Safari/537.36 Edge/12.246'
@@ -69,7 +60,6 @@ def scrape_process():
         r = requests.get(url, headers=headers)
         # Pass the HTML of the page and create 
         data = e.extract(r.text)
-        # logging.info(data)
         
         # Print the data 
         # print(json.dumps(data, indent=True))
@@ -90,13 +80,13 @@ def scrape_process():
             # appending data to emp_details  
         
         #dump data to store api files        
-        with open(rootPath+'stores/'+store+'/api__coupons.json', 'w') as outfile:
+        with open('stores/'+store+'/api__coupons.json', 'w') as outfile:
             json.dump(data, outfile)    
         
         #get data from store api files and santise links  
         
         
-        with open(rootPath+'stores/'+store+'/api__coupons.json') as json_file: 
+        with open('stores/'+store+'/api__coupons.json') as json_file: 
             getdata = json.load(json_file) 
             if(getdata['products']):
                 for x in getdata['products']:
@@ -107,14 +97,14 @@ def scrape_process():
                         response = requests.head(x['link'], allow_redirects=True)
                         x['link'] = response.url                        
                         print("true")
-        with open(rootPath+'stores/'+store+'/api__coupons.json', 'w') as outfile:
+        with open('stores/'+store+'/api__coupons.json', 'w') as outfile:
             json.dump(getdata['products'], outfile)    
 
         print("Data Sanitized")
     
 
         #get data from store api files and santise links and append affiliate ids
-        with open(rootPath+'stores/'+store+'/api__coupons.json') as json_file: 
+        with open('stores/'+store+'/api__coupons.json') as json_file: 
             getdata = json.load(json_file)    
         if(getdata):     
             for x in getdata:
@@ -136,9 +126,8 @@ def scrape_process():
                             print(urllib.parse.urlunparse(url_parts))
                             x['link'] = urllib.parse.urlunparse(url_parts)
 
-        with open(rootPath+'stores/'+store+'/api__coupons.json', 'w') as outfile:
-            json.dump(getdata, outfile)   
-            logging.info(getdata)     
+        with open('stores/'+store+'/api__coupons.json', 'w') as outfile:
+            json.dump(getdata, outfile)    
 
 
 def main():

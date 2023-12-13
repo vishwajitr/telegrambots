@@ -8,12 +8,12 @@ products:
             css: a.click_coupon_discount_description
             xpath: null
             type: Text
-        description:
-            css: 'div.f16 li:nth-of-type(1)'
-            xpath: null
-            type: Text
         link:
             css: a.coupon-btn
             xpath: null
             type: Attribute
             attribute: data-href
+        description:
+            css: 'div.more-info-show div'
+            xpath: null
+            type: Text
