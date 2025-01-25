@@ -50,6 +50,8 @@ def urlprocessing(url):
 
     
     link = urllib.parse.urlunparse(url_parts)
+    print(link)
+    exit()
     return link
 
 
@@ -160,7 +162,7 @@ def fetch_messages():
 
 # Schedule the fetch_messages function to run every 2 hours
 # schedule.every(2).hours.do(fetch_messages)
-schedule.every(15).minutes.do(fetch_messages)
+schedule.every(1).minutes.do(fetch_messages)
 
 
 # Run the scheduler indefinitely
