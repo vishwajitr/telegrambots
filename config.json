@@ -1,0 +1,55 @@
+{
+  "telegram": {
+    "api_id": "22544328",
+    "api_hash": "c9b5f81a263933e3fecce08cc719fa00",
+    "phone_number": "+919702270708",
+    "channels": [
+      "amazonindiaassociates",
+      "realearnkaro"
+    ],
+    "main_group": "dealstodayindia001"
+  },
+  "telegram_bot": {
+    "token": "6831241416:AAEamtwesUyXH5NBAGt3gLzMBsabgahGL9o",
+    "channel": "@dealstodayindia001",
+    "phone_number": "+919702270708"
+  },
+  "instagram": {
+    "username": "trendingoffers5",
+    "password": "vishu@1992"
+  },
+  "url_params": {
+        "default": {
+            "utm_source": "telegram",
+            "utm_medium": "social",
+            "utm_campaign": "deals",
+            "ref": "tgbot"
+        }
+  },
+  "affiliate_config": {
+    "amazon.in": {
+      "params": {
+        "tag": "offerscode08-21"
+      }
+    },
+    "flipkart.com": {
+      "params": {
+        "affid": "vishwajit8",
+        "affExtParam1": "vishwajit8",
+        "affExtParam2": "param2"
+      }
+    },
+    "myntra.com": {
+      "params": {
+        "referrer": "your-myntra-id"
+      }
+    }
+  },
+  "bitly": {
+    "access_token": "5ce0605d81302ac039faf49be37ec90c843cd62b"
+  },
+  "facebook": {
+    "access_token": "EAADjpjJBmTMBO1jab7vDC1v4CDFi6eaPpZCqLHQ1pMeLZCGxSSw5QcXfTNutypY6H5lBZAJ6SJKlPtaRbZBGCa5R3pwqq878BZB8FprCs7jwsZCGPGsU7igCOywe75zoZBIrLgWYHIYK092GPJlWDWV4M2jDmK4ZBexuQS06iPeWjZC2fOYh69PkYQZCpZCFfLSECRc6SYxxiEqTGjdBLoZD",
+    "page_id": "105896528030351"
+  }
+}

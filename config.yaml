@@ -8,10 +8,17 @@ telegram:
     - 'realearnkaro'
 
 # Telegram Bot Configuration for Forwarding
+# telegram_bot:
+#   token: '6831241416:AAEamtwesUyXH5NBAGt3gLzMBsabgahGL9o'
+#   channel: '@dealstodayindia001'
+#   phone_number: '+919702270708'
+
+
 telegram_bot:
-  token: '6831241416:AAEamtwesUyXH5NBAGt3gLzMBsabgahGL9o'
-  channel: '@dealstodayindia001'
+  token: '7748273765:AAFbZrG1Qiy9RzSLg87YlFpgLyTu4BUrAM4'
+  channel: '@vishwaT2IP'
   phone_number: '+919702270708'
+
 
 # Instagram Configuration
 instagram:

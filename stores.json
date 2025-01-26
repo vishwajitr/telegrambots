@@ -1,0 +1,166 @@
+{
+  "stores": [
+    {
+      "name": "Amazon India",
+      "domain": "amazon.in",
+      "affiliate_parameter": "tag",
+      "affiliate_id": "offerscode02-21"
+    },
+    {
+      "name": "Flipkart",
+      "domain": "flipkart.com",
+      "affiliate_parameter": "affid",
+      "affiliate_id": "vishwajit8"
+    },
+    {
+      "name": "Myntra",
+      "domain": "myntra.com",
+      "affiliate_parameter": "partner_id",
+      "affiliate_id": "your_myntra_partner_id"
+    },
+    {
+      "name": "Ajio",
+      "domain": "ajio.com",
+      "affiliate_parameter": "affid",
+      "affiliate_id": "your_ajio_affiliate_id"
+    },
+    {
+      "name": "Tata Cliq",
+      "domain": "tatacliq.com",
+      "affiliate_parameter": "ref",
+      "affiliate_id": "your_tatacliq_affiliate_id"
+    },
+    {
+      "name": "Snapdeal",
+      "domain": "snapdeal.com",
+      "affiliate_parameter": "utm_source",
+      "affiliate_id": "your_snapdeal_affiliate_id"
+    },
+    {
+      "name": "Paytm Mall",
+      "domain": "paytmmall.com",
+      "affiliate_parameter": "affiliate_id",
+      "affiliate_id": "your_paytm_affiliate_id"
+    },
+    {
+      "name": "Nykaa",
+      "domain": "nykaa.com",
+      "affiliate_parameter": "utm_source",
+      "affiliate_id": "your_nykaa_affiliate_id"
+    },
+    {
+      "name": "BigBasket",
+      "domain": "bigbasket.com",
+      "affiliate_parameter": "utm_campaign",
+      "affiliate_id": "your_bigbasket_affiliate_id"
+    },
+    {
+      "name": "Pepperfry",
+      "domain": "pepperfry.com",
+      "affiliate_parameter": "utm_source",
+      "affiliate_id": "your_pepperfry_affiliate_id"
+    },
+    {
+      "name": "Zivame",
+      "domain": "zivame.com",
+      "affiliate_parameter": "affid",
+      "affiliate_id": "your_zivame_affiliate_id"
+    },
+    {
+      "name": "FirstCry",
+      "domain": "firstcry.com",
+      "affiliate_parameter": "utm_source",
+      "affiliate_id": "your_firstcry_affiliate_id"
+    },
+    {
+      "name": "Lenskart",
+      "domain": "lenskart.com",
+      "affiliate_parameter": "utm_medium",
+      "affiliate_id": "your_lenskart_affiliate_id"
+    },
+    {
+      "name": "Croma",
+      "domain": "croma.com",
+      "affiliate_parameter": "source",
+      "affiliate_id": "your_croma_affiliate_id"
+    },
+    {
+      "name": "Reliance Digital",
+      "domain": "reliancedigital.in",
+      "affiliate_parameter": "source",
+      "affiliate_id": "your_reliancedigital_affiliate_id"
+    },
+    {
+      "name": "Urban Ladder",
+      "domain": "urbanladder.com",
+      "affiliate_parameter": "utm_campaign",
+      "affiliate_id": "your_urbanladder_affiliate_id"
+    },
+    {
+      "name": "Meesho",
+      "domain": "meesho.com",
+      "affiliate_parameter": "ref",
+      "affiliate_id": "your_meesho_affiliate_id"
+    },
+    {
+      "name": "Healthkart",
+      "domain": "healthkart.com",
+      "affiliate_parameter": "utm_source",
+      "affiliate_id": "your_healthkart_affiliate_id"
+    },
+    {
+      "name": "Clovia",
+      "domain": "clovia.com",
+      "affiliate_parameter": "affid",
+      "affiliate_id": "your_clovia_affiliate_id"
+    },
+    {
+      "name": "Shoppers Stop",
+      "domain": "shoppersstop.com",
+      "affiliate_parameter": "utm_medium",
+      "affiliate_id": "your_shoppersstop_affiliate_id"
+    },
+    {
+      "name": "Decathlon",
+      "domain": "decathlon.in",
+      "affiliate_parameter": "utm_campaign",
+      "affiliate_id": "your_decathlon_affiliate_id"
+    },
+    {
+      "name": "FabIndia",
+      "domain": "fabindia.com",
+      "affiliate_parameter": "source",
+      "affiliate_id": "your_fabindia_affiliate_id"
+    },
+    {
+      "name": "Craftsvilla",
+      "domain": "craftsvilla.com",
+      "affiliate_parameter": "utm_campaign",
+      "affiliate_id": "your_craftsvilla_affiliate_id"
+    },
+    {
+      "name": "Jabong",
+      "domain": "jabong.com",
+      "affiliate_parameter": "utm_source",
+      "affiliate_id": "your_jabong_affiliate_id"
+    },
+    {
+      "name": "Lifestyle",
+      "domain": "lifestylestores.com",
+      "affiliate_parameter": "utm_source",
+      "affiliate_id": "your_lifestyle_affiliate_id"
+    },
+    {
+      "name": "The Man Company",
+      "domain": "themancompany.com",
+      "affiliate_parameter": "affid",
+      "affiliate_id": "your_themancompany_affiliate_id"
+    },
+    {
+      "name": "Forest Essentials",
+      "domain": "forestessentialsindia.com",
+      "affiliate_parameter": "utm_source",
+      "affiliate_id": "your_forestessentials_affiliate_id"
+    }
+  ]
+}
