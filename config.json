@@ -4,7 +4,11 @@
     "api_hash": "c9b5f81a263933e3fecce08cc719fa00",
     "phone_number": "+919702270708",
     "channels": [
-      "-1493857075"
+      "@offers_flipkart",
+      "@amazonindiaassociates",
+      "@realearnkaro",
+      "@techglaredeals",
+      "@CKoffers"
     ],
     "main_group": "dealstodayindia001"
   },
@@ -22,7 +26,7 @@
             "utm_source": "telegram",
             "utm_medium": "social",
             "utm_campaign": "deals",
-            "ref": "tgbot"
+            "ref": "vishwajit8"
         }
   },
   "affiliate_config": {
@@ -36,11 +40,6 @@
         "affid": "vishwajit8",
         "affExtParam1": "vishwajit8",
         "affExtParam2": "param2"
-      }
-    },
-    "myntra.com": {
-      "params": {
-        "referrer": "your-myntra-id"
       }
     }
   },

@@ -75,16 +75,14 @@ class MultiChannelTelegramBot:
 
     def get_actual_url_with_selenium(self, redirect_url):
         try:
-            options = webdriver.ChromeOptions()
-            options.add_argument('--headless')
-            driver = webdriver.Chrome(options=options)
-            driver.get(redirect_url)
-            actual_url = driver.current_url
-            driver.quit()
-            return actual_url
+            headers = {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+            }
+            response = requests.get(redirect_url, headers=headers, allow_redirects=True, timeout=30)
+            return response.url
         except Exception as e:
-            self.logger.error(f"Selenium URL Error: {e}")
-            return None
+            self.logger.error(f"URL Resolution Error: {e}")
+            return redirect_url
 
     def process_url(self, url):
         # Add affiliate IDs based on the store configuration
@@ -101,10 +99,11 @@ class MultiChannelTelegramBot:
     def shorten_url(self, long_url):
         try:
             response = requests.post(
-                "http://0.0.0.0:8080/shorten",
+                "http://152.67.30.229/shorten",
                 json={"url": long_url}
             )
-            return f"http://152.67.30.229:8080{response.json()['short_url']}"
+            print(response.json())
+            return f"http://152.67.30.229{response.json()['short_url']}"
         except Exception as e:
             self.logger.error(f"URL Shortening Error: {e}")
             return long_url
@@ -116,9 +115,9 @@ class MultiChannelTelegramBot:
         
         for url in urls:
             full_url = url if url.startswith('http') else f'https://{url}'
+            print(f"Original URL: {url}")
             resolved_url = self.get_actual_url_with_selenium(full_url)
-            # print(f"Original URL: {url}")
-            # print(f"Resolved URL: {resolved_url}")
+            print(f"Resolved URL: {resolved_url}")
             
             if resolved_url:
                 processed_url = self.process_url(resolved_url)
