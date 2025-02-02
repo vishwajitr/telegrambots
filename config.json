@@ -41,6 +41,11 @@
         "affExtParam1": "vishwajit8",
         "affExtParam2": "param2"
       }
+    },
+    "cuelinks": {
+      "params": {
+        "pubid": "116382"
+      }
     }
   },
   "bitly": {

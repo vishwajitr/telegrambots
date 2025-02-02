@@ -109,20 +109,24 @@ class MultiChannelTelegramBot:
             return long_url
 
     def process_links(self, text):
-        # Fixed regex pattern for URL matching
         url_regex = r'(?:https?://)?[\w-]+(?:\.[\w-]+)+(?:/[^\s]*)?'
         urls = re.findall(url_regex, text)
         
         for url in urls:
             full_url = url if url.startswith('http') else f'https://{url}'
-            print(f"Original URL: {url}")
             resolved_url = self.get_actual_url_with_selenium(full_url)
-            print(f"Resolved URL: {resolved_url}")
             
             if resolved_url:
                 processed_url = self.process_url(resolved_url)
-                shortened_url = self.shorten_url(processed_url)
-                text = text.replace(url, shortened_url)
+                # Only shorten if it's Amazon or Flipkart
+                parsed_url = urllib.parse.urlparse(processed_url)
+                domain = parsed_url.netloc.replace('www.', '')
+                print(f"Domain: {domain}")
+                if domain.startswith(('amazon.', 'flipkart.')):
+                    shortened_url = self.shorten_url(processed_url)
+                    text = text.replace(url, shortened_url)
+                else:
+                    text = text.replace(url, processed_url)
         
         return text
 
@@ -213,7 +217,7 @@ if __name__ == '__main__':
     
     if len(sys.argv) > 1 and sys.argv[1] == 'test':
         # Test post functionality
-        test_message = "**✨ Trending Styles For Men**⚡ Min. 40% off+ Extra 5% offView offer 👉 https://fkrt.co/J5chcg"
+        test_message = "**✨ Trending Styles For Men**⚡ Min. 40% off+ Extra 5% offView offer 👉 https://ajiio.in/HJQhHyn"
         processed_message = bot.process_links(test_message)
         # print(f"Processed message: {processed_message}")
         bot.send_telegram_message(processed_message)
