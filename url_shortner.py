@@ -1,23 +1,18 @@
 from fastapi import FastAPI, HTTPException
+from fastapi.responses import RedirectResponse
 import string
 import random
 import uvicorn
 from pydantic import BaseModel
-import json
-from fastapi.responses import RedirectResponse
+import pymongo
+from datetime import datetime
 
 app = FastAPI()
 
-def load_mappings():
-    try:
-        with open('url_mappings.json', 'r') as f:
-            return json.load(f)
-    except FileNotFoundError:
-        return {}
-
-def save_mappings():
-    with open('url_mappings.json', 'w') as f:
-        json.dump(url_mapping, f)
+# Connect to MongoDB Atlas
+client = pymongo.MongoClient("mongodb+srv://vishwajit:b77g7WDKOoWRPiHe@cluster0.oimfhfg.mongodb.net/?tls=true&tlsAllowInvalidCertificates=true")
+db = client["url_shortner_db"]
+collection = db["url_mapping"]
 
 def generate_short_id(length=6):
     chars = string.ascii_letters + string.digits
@@ -26,53 +21,67 @@ def generate_short_id(length=6):
 class URL(BaseModel):
     url: str
 
-url_mapping = load_mappings()
-
 @app.post("/shorten")
 def shorten_url(url_data: URL):
     short_id = generate_short_id()
-    url_mapping[short_id] = url_data.url
-    save_mappings()
+    collection.insert_one({
+        "short_id": short_id,
+        "long_url": url_data.url,
+        "created_at": datetime.now()
+    })
     return {"short_url": f"/s/{short_id}"}
-
-# @app.get("/s/{short_id}")
-# def redirect_url(short_id: str):
-#     if short_id in url_mapping:
-#         return {"url": url_mapping[short_id]}
-#     raise HTTPException(status_code=404, detail="URL not found")
 
 @app.get("/s/{short_id}")
 def redirect_url(short_id: str):
-    if short_id in url_mapping:
-        return RedirectResponse(url=url_mapping[short_id])
+    url_mapping = collection.find_one({"short_id": short_id})
+    if url_mapping:
+        return RedirectResponse(url=url_mapping["long_url"])
     raise HTTPException(status_code=404, detail="URL not found")
 
 @app.get("/urls")
 def get_all_urls():
-    return url_mapping
+    return list(collection.find({}, {"_id": 0}))
 
-@app.get("/")
-def test_home():
-    return {"message": "URL Shortener API"}
-    
+@app.get("/health")
+def health_check():
+    try:
+        client.server_info()
+        return {
+            "status": "healthy",
+            "database": "connected",
+            "timestamp": datetime.now().isoformat()
+        }
+    except Exception as e:
+        raise HTTPException(status_code=503, detail=f"Service unhealthy: {str(e)}")
+
 @app.get("/test")
 def test_shortener():
-    # Test URL to shorten
-    test_url = "https://www.amazon.in/hz/mobile/mission?p=iPhv1f%2BLOoJ7SxyDD3IAHS6Z7Gq2ta2zt12dskLmAvxNqyfOmj%2BKJrEfPITt3QtrJYjITHqstRHwhRBZbZvZEM4NS195PcbGjOBYW0V3w2kUbPhu5ugefipVFTXLmsjWWwxKd9KhVTzoAK2CDYObYyXUlXeaTcE%2FOYdZR3o6ChNVX5q9yK303X9rLLq0DYTgdI1s2bBaeF9Mah1X4PafIKgvIufuxzqVUoYlrprBtAZ3UEP1Q1zop48zTLtUui4BvK9YdhknzRpZltvFkV02qeJ95gNDUk%2Fe0AvxoUy%2FsUX3PZI9n8C8nx5tgs0M7o%2BCgf5vhdhhVGS2mzLNNNmKJlA741ZHkTTOskFEOQ664RSHAauYPi%2Ft661%2FyUWv8gqw4nMzI7kbvrK1j0cIX9ts1Q%3D%3D&ref_=ci_mcx_mi&pf_rd_r=DM6519DE36M3WMMDMZ0T&pf_rd_p=45c1a5b4-dab8-4658-948a-91185ec4c179&pd_rd_r=1501322e-41a5-4f98-8281-60f828c65adb&pd_rd_w=krZ9Q&pd_rd_wg=MbJHp"
-    
-    # Test shortening
+    test_url = "https://www.example.com/test-path"
     short_result = shorten_url(URL(url=test_url))
     short_id = short_result["short_url"].split("/")[-1]
-    
-    # Test redirection
-    redirect_result = redirect_url(short_id)
+    url_mapping = collection.find_one({"short_id": short_id})
     
     return {
         "status": "success",
         "original_url": test_url,
         "shortened_url": short_result["short_url"],
-        "resolved_url": redirect_result["url"],
-        "working": test_url == redirect_result["url"]
+        "resolved_url": url_mapping["long_url"] if url_mapping else None,
+        "working": test_url == url_mapping["long_url"] if url_mapping else False
+    }
+
+@app.delete("/urls/{short_id}")
+def delete_url(short_id: str):
+    result = collection.delete_one({"short_id": short_id})
+    if result.deleted_count:
+        return {"status": "success", "message": f"URL with id {short_id} deleted"}
+    raise HTTPException(status_code=404, detail="URL not found")
+
+@app.get("/stats")
+def get_stats():
+    return {
+        "total_urls": collection.count_documents({}),
+        "database_size": db.command("dbstats")["dataSize"],
+        "last_added": list(collection.find({}, {"_id": 0}).sort("_id", -1).limit(1))
     }
 
 if __name__ == "__main__":

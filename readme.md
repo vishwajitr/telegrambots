@@ -1,4 +1,4 @@
-scp -r crawlernew/ offersapp6:/home/ubuntu/socialshare
+scp -r crawlernew/* offersapp6:/home/ubuntu/socialshare
 nohup python3 telegrambot2.py &
 
 Similar Bots who pick offers a different sources
@@ -40,3 +40,14 @@ changes
 
 ps aux | grep url_shortner.py
 nohup python3 url_shortner.py &
+
+cluster url
+https://cloud.mongodb.com/v2/646f35566f882a24efab4023#/clusters
+
+https://cloud.mongodb.com/v2/646f35566f882a24efab4023#/metrics/replicaSet/646f36363452526f83aa8bd2/explorer/aoneDB/orders_is/find
+
+
+db urls
+mongodb+srv://vishwajit:<password>@cluster0.oimfhfg.mongodb.net/
+mongodb+srv://vishwajit:b77g7WDKOoWRPiHe@cluster0.oimfhfg.mongodb.net/
+
