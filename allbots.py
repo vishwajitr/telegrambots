@@ -101,10 +101,10 @@ class MultiChannelTelegramBot:
     def shorten_url(self, long_url):
         try:
             response = requests.post(
-                "http://localhost:8000/shorten",
+                "http://0.0.0.0:8080/shorten",
                 json={"url": long_url}
             )
-            return f"http://localhost:8000{response.json()['short_url']}"
+            return f"http://152.67.30.229:8080{response.json()['short_url']}"
         except Exception as e:
             self.logger.error(f"URL Shortening Error: {e}")
             return long_url

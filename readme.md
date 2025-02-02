@@ -36,3 +36,7 @@ changes
 1. keeps history of post and repetition avoids
 2. own url shortner
 3. test parameter inttoduce to test immediately
+
+
+ps aux | grep url_shortner.py
+nohup python3 url_shortner.py &
