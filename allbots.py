@@ -109,7 +109,7 @@ class MultiChannelTelegramBot:
             return long_url
 
     def process_links(self, text):
-        url_regex = r'(?:https?://)?[\w-]+(?:\.[\w-]+)+(?:/[^\s]*)?'
+        url_regex = r'https?://\S+'
         urls = re.findall(url_regex, text)
         
         for url in urls:
@@ -217,7 +217,8 @@ if __name__ == '__main__':
     
     if len(sys.argv) > 1 and sys.argv[1] == 'test':
         # Test post functionality
-        test_message = "**✨ Trending Styles For Men**⚡ Min. 40% off+ Extra 5% offView offer 👉 https://ajiio.in/HJQhHyn"
+        # test_message = "**✨ Trending Styles For Men**⚡ Min. 40% off+ Extra 5% offView offer 👉 https://ajiio.in/HJQhHyn"
+        test_message = "Mix Dry Fruits & Nuts, 1Kg at Rs.499 https://amzn.to/40YE268"
         processed_message = bot.process_links(test_message)
         # print(f"Processed message: {processed_message}")
         bot.send_telegram_message(processed_message)
