@@ -122,7 +122,7 @@ class MultiChannelTelegramBot:
                 parsed_url = urllib.parse.urlparse(processed_url)
                 domain = parsed_url.netloc.replace('www.', '')
                 print(f"Domain: {domain}")
-                if domain.startswith(('amazon.', 'flipkart.')):
+                if any(domain.endswith(site) for site in ('amazon.com', 'flipkart.com')):
                     shortened_url = self.shorten_url(processed_url)
                     text = text.replace(url, shortened_url)
                 else:
@@ -218,7 +218,7 @@ if __name__ == '__main__':
     if len(sys.argv) > 1 and sys.argv[1] == 'test':
         # Test post functionality
         # test_message = "**✨ Trending Styles For Men**⚡ Min. 40% off+ Extra 5% offView offer 👉 https://ajiio.in/HJQhHyn"
-        test_message = "Mix Dry Fruits & Nuts, 1Kg at Rs.499 https://amzn.to/40YE268"
+        test_message = "Safari Laptop Backpack Starts at Rs.445. https://fkrt.cc/EDRTbr"
         processed_message = bot.process_links(test_message)
         # print(f"Processed message: {processed_message}")
         bot.send_telegram_message(processed_message)
