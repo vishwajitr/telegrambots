@@ -192,6 +192,8 @@ class MultiChannelTelegramBot:
 
                     # Process and forward the message
                     if message.text:
+                        if any(x in message.text for x in ["https://t.me/", "https://telegram", "telegram.me"]):
+                            continue
                         processed_text = self.process_links(message.text)
                         recent_messages = await client.get_messages(self.main_group, limit=10)
                         if all(msg.text != processed_text for msg in recent_messages if msg.text):
