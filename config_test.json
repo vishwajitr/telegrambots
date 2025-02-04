@@ -28,7 +28,12 @@
   "affiliate_config": {
     "amazon.in": {
       "params": {
-        "tag": "offerscode08-21"
+        "tag": "vishwajit8-21"
+      }
+    },
+    "amazon.com": {
+      "params": {
+        "tag": "vishwajit8-21"
       }
     },
     "flipkart.com": {

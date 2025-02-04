@@ -32,7 +32,12 @@
   "affiliate_config": {
     "amazon.in": {
       "params": {
-        "tag": "offerscode08-21"
+        "tag": "vishwajit8-21"
+      }
+    },
+    "amazon.com": {
+      "params": {
+        "tag": "vishwajit8-21"
       }
     },
     "flipkart.com": {
@@ -52,7 +57,9 @@
     "access_token": "5ce0605d81302ac039faf49be37ec90c843cd62b"
   },
   "facebook": {
-    "access_token": "EAADjpjJBmTMBO1jab7vDC1v4CDFi6eaPpZCqLHQ1pMeLZCGxSSw5QcXfTNutypY6H5lBZAJ6SJKlPtaRbZBGCa5R3pwqq878BZB8FprCs7jwsZCGPGsU7igCOywe75zoZBIrLgWYHIYK092GPJlWDWV4M2jDmK4ZBexuQS06iPeWjZC2fOYh69PkYQZCpZCFfLSECRc6SYxxiEqTGjdBLoZD",
-    "page_id": "105896528030351"
+    "page_token": "EAADjpjJBmTMBO1jab7vDC1v4CDFi6eaPpZCqLHQ1pMeLZCGxSSw5QcXfTNutypY6H5lBZAJ6SJKlPtaRbZBGCa5R3pwqq878BZB8FprCs7jwsZCGPGsU7igCOywe75zoZBIrLgWYHIYK092GPJlWDWV4M2jDmK4ZBexuQS06iPeWjZC2fOYh69PkYQZCpZCFfLSECRc6SYxxiEqTGjdBLoZD",
+    "group_token": "EAADjpjJBmTMBO0VRgdI7M7VM023fdEQCwwQLaNdGqHeMAbZBI83ZCXwnZA3hIBMRjtq6j2car3llmkAfkxtFTlKd76SebWMK1xtR70E1a1zpeLl93BRSGAMTB3bFurhkjW3jaaZB6xKSGzIObkMFoISR5jofFDEVjcFZCSzadCMyURcvhK78bgNHTR8hH2W6sDXPDQGiy",
+    "page_id": "105896528030351",
+    "group_id": "1141589867362207"
   }
 }
