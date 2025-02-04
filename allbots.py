@@ -35,7 +35,7 @@ class MultiChannelTelegramBot:
         self.affiliate_config = self.config.get('affiliate_config', {})
 
         # Facebook Configuration
-        self.facebook_token = self.config['facebook']['access_token']
+        self.facebook_token = self.config['facebook']['page_token']
         self.facebook_page_id = self.config['facebook']['page_id']
 
         # Instagram Configuration
@@ -85,15 +85,28 @@ class MultiChannelTelegramBot:
             return redirect_url
 
     def process_url(self, url):
-        # Add affiliate IDs based on the store configuration
-        for store, config in self.affiliate_config.items():
-            if store in url:
-                parsed_url = urllib.parse.urlparse(url)
-                query_params = dict(urllib.parse.parse_qsl(parsed_url.query))
-                query_params.update(config['params'])
-                url = urllib.parse.urlunparse(parsed_url._replace(
-                    query=urllib.parse.urlencode(query_params)
-                ))
+        parsed_url = urllib.parse.urlparse(url)
+        domain = parsed_url.netloc.replace('www.', '')
+        
+        # Handle Amazon and Flipkart specifically
+        if any(store in domain for store in ['amazon.in', 'amazon.com', 'flipkart.com']):
+            for store, config in self.affiliate_config.items():
+                if store in url:
+                    query_params = dict(urllib.parse.parse_qsl(parsed_url.query))
+                    query_params.update(config['params'])
+                    return urllib.parse.urlunparse(parsed_url._replace(
+                        query=urllib.parse.urlencode(query_params)
+                    ))
+        
+        # Use Cuelinks for all other e-commerce domains
+        else:
+            cuelinks_params = self.affiliate_config['cuelinks']['params']
+            query_params = dict(urllib.parse.parse_qsl(parsed_url.query))
+            query_params.update(cuelinks_params)
+            return urllib.parse.urlunparse(parsed_url._replace(
+                query=urllib.parse.urlencode(query_params)
+            ))
+        
         return url
 
     def shorten_url(self, long_url):
@@ -220,7 +233,8 @@ if __name__ == '__main__':
     if len(sys.argv) > 1 and sys.argv[1] == 'test':
         # Test post functionality
         # test_message = "**✨ Trending Styles For Men**⚡ Min. 40% off+ Extra 5% offView offer 👉 https://ajiio.in/HJQhHyn"
-        test_message = "Safari Laptop Backpack Starts at Rs.445. https://fkrt.cc/EDRTbr"
+        # test_message = "Safari Laptop Backpack Starts at Rs.445. https://fkrt.cc/EDRTbr"
+        test_message = "**Myntra**: Aristocrat hard trolleys starting @1499 https://linkredirect.in/visitretailer/2111?id=1962507&shareid=UbJui72&dl=https%3A%2F%2Fwww.myntra.com%2Faristocrat-trolley%3Ff%3DBag%2520Type%253ASuitcase%26rawQuery%3DAristocrat%2520Trolley%26rf%3DPrice%253A1400.0_28100.0_1400.0%2520TO%252028100.0%26sort%3Dprice_asc"
         processed_message = bot.process_links(test_message)
         # print(f"Processed message: {processed_message}")
         bot.send_telegram_message(processed_message)
