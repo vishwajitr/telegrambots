@@ -1,0 +1,16 @@
+# from telethon import TelegramClient
+
+# api_id = '22544328'
+# api_hash = 'c9b5f81a263933e3fecce08cc719fa00'
+# phone = '+919702270708'
+
+# client = TelegramClient('session_name', api_id, api_hash)
+
+async def main():
+    print("Welcome")
+    # await client.start(phone)
+    # group = await client.get_entity('https://web.telegram.org/k/#@realearnkaro')  # Not for channels
+    # async for user in client.iter_participants(group):
+    #     print(user.id, user.first_name, user.username)
+
+main()

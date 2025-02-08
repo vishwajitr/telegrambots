@@ -1,206 +1,250 @@
 import os
 import asyncio
 import logging
-import yaml
+import json
 import re
+import urllib.parse
+import requests
 from telethon import TelegramClient
 from telethon.sessions import StringSession
 from telethon.tl.types import MessageMediaPhoto
-import urllib.parse
-import requests
 from selenium import webdriver
 import facebook
-import schedule
-import time
 from instagrapi import Client
+from datetime import datetime
 
 class MultiChannelTelegramBot:
-    def __init__(self, config_path='config.yaml'):
+    def __init__(self, config_path='config.json'):
         # Load configuration
         with open(config_path, 'r') as file:
-            self.config = yaml.safe_load(file)
-        
+            self.config = json.load(file)
+
         # Telegram Configuration
         self.api_id = self.config['telegram']['api_id']
         self.api_hash = self.config['telegram']['api_hash']
         self.phone_number = self.config['telegram']['phone_number']
         self.channels = self.config['telegram']['channels']
-        
+        self.main_group = self.config['telegram']['main_group']
+
         # Bot Configuration
         self.bot_token = self.config['telegram_bot']['token']
         self.target_channel = self.config['telegram_bot']['channel']
-        
+
         # URL Processing Parameters
         self.url_params = self.config.get('url_params', {})
-        
-        # Bitly Configuration
-        self.bitly_token = self.config['bitly']['access_token']
-        
+        self.affiliate_config = self.config.get('affiliate_config', {})
+
         # Facebook Configuration
-        self.facebook_token = self.config['facebook']['access_token']
+        self.facebook_token = self.config['facebook']['page_token']
         self.facebook_page_id = self.config['facebook']['page_id']
-        
+
         # Instagram Configuration
         self.instagram_username = self.config['instagram']['username']
         self.instagram_password = self.config['instagram']['password']
-        
-        # Setup logging
+
+        # Logging Setup
         logging.basicConfig(level=logging.INFO, 
-                          format='%(asctime)s - %(levelname)s: %(message)s')
+                            format='%(asctime)s - %(levelname)s: %(message)s')
         self.logger = logging.getLogger(__name__)
-        
-        # Initialize clients
+
+        # State Management
+        self.last_messages = self.load_last_messages()
+
+        # Initialize Clients
         self.ig_client = Client()
+
+    def load_last_messages(self):
+        if os.path.exists('last_messages.json'):
+            with open('last_messages.json', 'r') as file:
+                return json.load(file)
+        return {}
+
+    def save_last_messages(self):
+        with open('last_messages.json', 'w') as file:
+            json.dump(self.last_messages, file)
 
     async def download_media(self, message):
         try:
             media_dir = os.path.join(os.getcwd(), 'temp_media')
             os.makedirs(media_dir, exist_ok=True)
             media_path = await message.download_media(file=media_dir)
-            
-            if media_path and os.path.exists(media_path):
-                file_size = os.path.getsize(media_path)
-                self.logger.info(f"Media downloaded successfully: {media_path} (Size: {file_size} bytes)")
-                return media_path
-            return None
+            return media_path if media_path and os.path.exists(media_path) else None
         except Exception as e:
             self.logger.error(f"Media download error: {e}")
             return None
-        
+
     def get_actual_url_with_selenium(self, redirect_url):
         try:
-            options = webdriver.ChromeOptions()
-            options.add_argument('--headless')
-            driver = webdriver.Chrome(options=options)
-            driver.get(redirect_url)
-            actual_url = driver.current_url
-            driver.quit()
-            return actual_url
+            headers = {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+            }
+            response = requests.get(redirect_url, headers=headers, allow_redirects=True, timeout=30)
+            return response.url
         except Exception as e:
-            self.logger.error(f"Selenium URL Error: {e}")
-            return None
+            self.logger.error(f"URL Resolution Error: {e}")
+            return redirect_url
 
     def process_url(self, url):
-        url_parts = list(urllib.parse.urlparse(url))
-        query = dict(urllib.parse.parse_qsl(url_parts[4]))
-        query.update(self.url_params)
-        url_parts[4] = urllib.parse.urlencode(query)
-        return urllib.parse.urlunparse(url_parts)
+        # Add affiliate IDs based on the store configuration
+        for store, config in self.affiliate_config.items():
+            if store in url:
+                parsed_url = urllib.parse.urlparse(url)
+                query_params = dict(urllib.parse.parse_qsl(parsed_url.query))
+                query_params.update(config['params'])
+                url = urllib.parse.urlunparse(parsed_url._replace(
+                    query=urllib.parse.urlencode(query_params)
+                ))
+        return url
 
     def shorten_url(self, long_url):
-        bitly_api_url = 'https://api-ssl.bitly.com/v4/shorten'
-        headers = {
-            'Authorization': f'Bearer {self.bitly_token}',
-            'Content-Type': 'application/json',
-        }
-        data = {'long_url': long_url}
-        
         try:
-            response = requests.post(bitly_api_url, headers=headers, json=data)
-            return response.json()['link'] if response.status_code == 200 else None
+            response = requests.post(
+                "http://152.67.30.229/shorten",
+                json={"url": long_url}
+            )
+            print(response.json())
+            return f"http://152.67.30.229{response.json()['short_url']}"
         except Exception as e:
             self.logger.error(f"URL Shortening Error: {e}")
-            return None
+            return long_url
 
     def process_links(self, text):
         url_regex = r'https?://\S+'
         urls = re.findall(url_regex, text)
-
+        
         for url in urls:
-            new_link = self.get_actual_url_with_selenium(url)
-            if new_link:
-                processed_url = self.process_url(new_link)
-                shortened_url = self.shorten_url(processed_url)
-                if shortened_url:
+            full_url = url if url.startswith('http') else f'https://{url}'
+            resolved_url = self.get_actual_url_with_selenium(full_url)
+            
+            if resolved_url:
+                processed_url = self.process_url(resolved_url)
+                # Only shorten if it's Amazon or Flipkart
+                parsed_url = urllib.parse.urlparse(processed_url)
+                domain = parsed_url.netloc.replace('www.', '')
+                print(f"Domain: {domain}")
+                if any(domain.endswith(site) for site in ('amazon.com', 'flipkart.com')):
+                    shortened_url = self.shorten_url(processed_url)
                     text = text.replace(url, shortened_url)
+                else:
+                    text = text.replace(url, processed_url)
+        
         return text
 
     def send_telegram_message(self, message):
+        # Find URLs in the message
+        url_pattern = r'(http[s]?://\S+)'
+        urls = re.findall(url_pattern, message)
+        
+        # Replace URLs with HTML formatted links
+        formatted_message = message
+        for url in urls:
+            html_link = f'{url}'
+            formatted_message = formatted_message.replace(url, html_link)
+        
         url = f"https://api.telegram.org/bot{self.bot_token}/sendMessage"
         params = {
             'chat_id': self.target_channel,
-            'text': message,
-            'parse_mode': 'HTML'
+            'text': formatted_message,
+            'parse_mode': 'HTML',
+            'disable_web_page_preview': False
         }
         return requests.post(url, params=params).json()
 
-    def post_to_facebook(self, message):
+
+    def post_to_facebook(self, message, media_path=None):
         try:
-            graph = facebook.GraphAPI(access_token=self.facebook_token)
-            graph.put_object(parent_object=self.facebook_page_id, 
-                           connection_name='feed', 
-                           message=message)
+            graph = facebook.GraphAPI(access_token=self.config['facebook']['page_token'])
+            if media_path:
+                with open(media_path, 'rb') as image:
+                    graph.put_photo(image=image, message=message, album_path=f"{self.facebook_page_id}/photos")
+            else:
+                graph.put_object(parent_object=self.facebook_page_id, connection_name='feed', message=message)
             self.logger.info("Message posted to Facebook successfully")
         except Exception as e:
             self.logger.error(f"Facebook Posting Error: {e}")
+            
+    def post_to_facebook_group(self, message, media_path=None):
+        try:
+            graph = facebook.GraphAPI(access_token=self.config['facebook']['group_token'])
+            group_id = "1141589867362207"
+            if media_path:
+                with open(media_path, 'rb') as image:
+                    graph.put_photo(image=image, message=message, album_path=f"{group_id}/photos")
+            else:
+                graph.put_object(parent_object=group_id, connection_name='feed', message=message)
+            self.logger.info("Message posted to Facebook group successfully")
+        except Exception as e:
+            self.logger.error(f"Facebook Group Posting Error: {e}")
+
+            
 
     async def post_to_instagram(self, message, media_path):
         try:
             self.ig_client.login(self.instagram_username, self.instagram_password)
-            caption = message[:2200] if len(message) > 2200 else message
-            
-            from PIL import Image
-            img = Image.open(media_path)
-            img.verify()
-            
-            upload_result = self.ig_client.photo_upload(
-                path=media_path,
-                caption=caption
-            )
-            self.logger.info(f"Successfully uploaded post to Instagram")
-            return True
+            self.ig_client.photo_upload(media_path, caption=message)
+            self.logger.info("Successfully posted to Instagram")
         except Exception as e:
             self.logger.error(f"Instagram posting error: {e}")
-            return False
 
     async def main(self):
-      client = TelegramClient('session', self.api_id, self.api_hash)
-      await client.start()
-      
-      while True:
-          for channel in self.channels:
-              try:
-                  entity = await client.get_entity(channel)
-                  messages = await client.get_messages(entity, limit=1)
-                  
-                  for message in messages:
-                      if message.text:
-                          processed_text = self.process_links(message.text)
-                          self.send_telegram_message(processed_text)
-                          
-                          if isinstance(message.media, MessageMediaPhoto):
-                              media_path = await self.download_media(message)
-                              if media_path:
-                                  try:
-                                      # Post to Facebook with media
-                                      graph = facebook.GraphAPI(access_token=self.facebook_token)
-                                      with open(media_path, 'rb') as image:
-                                          graph.put_photo(
-                                              image=image,
-                                              message=processed_text,
-                                              album_path=f"{self.facebook_page_id}/photos"
-                                          )
-                                      self.logger.info("Posted to Facebook with media successfully")
-                                      
-                                      # Post to Instagram
-                                      await self.post_to_instagram(processed_text, media_path)
-                                  finally:
-                                      if os.path.exists(media_path):
-                                          os.remove(media_path)
-                                          self.logger.info(f"Cleaned up media file: {media_path}")
-                          else:
-                              # Text-only post to Facebook
-                              self.post_to_facebook(processed_text)
-                              
-              except Exception as e:
-                  self.logger.error(f"Message Fetching Error for {channel}: {e}")
-                      
-              await asyncio.sleep(900)
+        client = TelegramClient('session', self.api_id, self.api_hash)
+        await client.start()
 
+        while True:
+            for channel in self.channels:
+                try:
+                    entity = await client.get_entity(channel)
+                    messages = await client.get_messages(entity, limit=1)
+                    if not messages:
+                        continue
+                    message = messages[0]
+                    if self.last_messages.get(channel) == message.id:
+                        continue
 
-def run_bot():
-    bot = MultiChannelTelegramBot()
-    asyncio.run(bot.main())
+                    # Update last message ID
+                    self.last_messages[channel] = message.id
+                    self.save_last_messages()
+
+                    # Process and forward the message
+                    if message.text:
+                        if any(x in message.text for x in ["https://t.me/", "https://telegram", "telegram.me"]):
+                            continue
+                        processed_text = self.process_links(message.text)
+                        recent_messages = await client.get_messages(self.main_group, limit=10)
+                        if all(msg.text != processed_text for msg in recent_messages if msg.text):
+                            self.send_telegram_message(processed_text)
+                            if isinstance(message.media, MessageMediaPhoto):
+                                media_path = await self.download_media(message)
+                                if media_path:
+                                    self.post_to_facebook(processed_text, media_path)
+                                    self.post_to_facebook_group(processed_text, media_path)
+                                    await self.post_to_instagram(processed_text, media_path)
+                                    os.remove(media_path)
+                            else:
+                                self.post_to_facebook(processed_text)
+                                self.post_to_facebook_group(processed_text)
+
+                except Exception as e:
+                    self.logger.error(f"Error processing channel {channel}: {e}")
+
+            await asyncio.sleep(900)
+
 
 if __name__ == '__main__':
-    run_bot()
+    import sys
+    bot = MultiChannelTelegramBot()
+    
+    if len(sys.argv) > 1 and sys.argv[1] == 'test':
+        # Test post functionality
+        # test_message = "**✨ Trending Styles For Men**⚡ Min. 40% off+ Extra 5% offView offer 👉 https://ajiio.in/HJQhHyn"
+        test_message = "Safari Laptop Backpack Starts at Rs.445. https://fkrt.cc/EDRTbr"
+        processed_message = bot.process_links(test_message)
+        # print(f"Processed message: {processed_message}")
+        bot.send_telegram_message(processed_message)
+        bot.post_to_facebook(processed_message)
+        bot.post_to_facebook_group(processed_message)
+        asyncio.run(bot.post_to_instagram(processed_message, None))
+        print("Test posts sent to all platforms")
+    else:
+        # Normal continuous operation
+        asyncio.run(bot.main())

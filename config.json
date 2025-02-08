@@ -7,8 +7,7 @@
       "@offers_flipkart",
       "@amazonindiaassociates",
       "@realearnkaro",
-      "@techglaredeals",
-      "@CKoffers"
+      "@techglaredeals"
     ],
     "main_group": "dealstodayindia001"
   },
@@ -30,17 +29,12 @@
         }
   },
   "affiliate_config": {
-    "amazon.in": {
+    "amazon": {
       "params": {
         "tag": "vishwajit8-21"
       }
     },
-    "amazon.com": {
-      "params": {
-        "tag": "vishwajit8-21"
-      }
-    },
-    "flipkart.com": {
+    "flipkart": {
       "params": {
         "affid": "vishwajit8",
         "affExtParam1": "vishwajit8",
@@ -49,7 +43,8 @@
     },
     "cuelinks": {
       "params": {
-        "pubid": "116382"
+        "pubid": "116382",
+        "cid": "204875"
       }
     }
   },

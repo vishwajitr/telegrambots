@@ -3,3 +3,15 @@
 /ymlmodules
 
 /__pycache__
+
+# Session-related files
+*.session
+*.session-journal
+sessions/
+.session/
+session_data/
+chromedriver.log
+
+# Config files
+config_test.json
+

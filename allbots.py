@@ -85,83 +85,167 @@ class MultiChannelTelegramBot:
             return redirect_url
 
     def process_url(self, url):
-        parsed_url = urllib.parse.urlparse(url)
-        domain = parsed_url.netloc.replace('www.', '')
-        
-        # Handle Amazon and Flipkart specifically
-        if any(store in domain for store in ['amazon.in', 'amazon.com', 'flipkart.com']):
-            for store, config in self.affiliate_config.items():
-                if store in url:
-                    query_params = dict(urllib.parse.parse_qsl(parsed_url.query))
-                    query_params.update(config['params'])
-                    return urllib.parse.urlunparse(parsed_url._replace(
-                        query=urllib.parse.urlencode(query_params)
-                    ))
-        
-        # Use Cuelinks for all other e-commerce domains
-        else:
-            cuelinks_params = self.affiliate_config['cuelinks']['params']
-            query_params = dict(urllib.parse.parse_qsl(parsed_url.query))
-            query_params.update(cuelinks_params)
-            return urllib.parse.urlunparse(parsed_url._replace(
-                query=urllib.parse.urlencode(query_params)
-            ))
-        
-        return url
-
-    def shorten_url(self, long_url):
+        """
+        Process any URL to add affiliate parameters and handle various URL formats
+        """
         try:
-            response = requests.post(
-                "http://152.67.30.229/shorten",
-                json={"url": long_url}
-            )
-            print(response.json())
-            return f"http://152.67.30.229{response.json()['short_url']}"
-        except Exception as e:
-            self.logger.error(f"URL Shortening Error: {e}")
-            return long_url
+            self.logger.info(f"Processing URL: {url}")
+            
+            url = url.strip()
+            # Basic URL validation and formatting
+            if not url:
+                return url
+                
+            if not url.startswith(('http://', 'https://')):
+                if url.startswith('//'):
+                    url = f"https:{url}"
+                else:
+                    url = f"https://{url}"
+            
+            url_shorteners = ['blinks.to', 'fkrt.cc', 'ajiio.in', 'amzn.to']
+            
+            # Resolve shortened URLs
+            if any(shortener in url for shortener in url_shorteners):
+                try:
+                    headers = {
+                        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+                        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8'
+                    }
+                    response = requests.get(url, headers=headers, allow_redirects=True, timeout=10)
+                    if response.status_code == 200:
+                        url = response.url
+                        self.logger.info(f"URL resolved to: {url}")
+                except Exception as e:
+                    self.logger.error(f"Error resolving shortened URL {url}: {e}")
+            
+            # Parse and process URL
+            parsed_url = urllib.parse.urlparse(url)
+            domain = parsed_url.netloc.lower().replace('www.', '')
+            
+            # Extract existing query parameters
+            query_params = dict(urllib.parse.parse_qsl(parsed_url.query))
+            # Process Amazon and Flipkart URLs
+            if domain in ['amazon.in', 'amazon.com', 'flipkart.com']:
+                if 'amazon' in domain:
+                    store = 'amazon'
+                elif 'flipkart' in domain:
+                    store = 'flipkart'
+                # self.logger.info(f"Processing {store} URL: {domain}")
+                # # Add debug logging for configuration
+                # self.logger.info(f"Available affiliate configs: {self.affiliate_config.keys()}")
+                # self.logger.info(f"Current store: {store}")
+                
+                if store in self.affiliate_config:
+                    self.logger.info(f"Found affiliate config for {store}: {self.affiliate_config[store]}")
 
+                    
+                    # Add affiliate parameters directly without filtering
+                    store_params = self.affiliate_config[store].get('params', {})
+                    query_params.update(store_params)  # Add affiliate params to existing params
+                    
+                    processed_url = urllib.parse.urlunparse(
+                        parsed_url._replace(
+                            query=urllib.parse.urlencode(query_params),
+                            fragment=''
+                        )
+                    )
+                    self.logger.info(f"Processed URL: {processed_url}")
+                    return processed_url
+                else:
+                    self.logger.info(f"No affiliate config found for {store}")
+                    return url
+            
+            # Use Cuelinks for all other URLs
+            elif 'cuelinks' in self.affiliate_config:
+                print("cuelinks")  # Debug print
+                # Preserve original important parameters
+                important_params = ['utm_source', 'utm_medium', 'utm_campaign']
+                filtered_params = {
+                    k: v for k, v in query_params.items() 
+                    if k in important_params
+                }
+                
+                # Add Cuelinks parameters
+                cuelinks_params = self.affiliate_config['cuelinks'].get('params', {})
+                filtered_params.update(cuelinks_params)
+                
+                processed_url = urllib.parse.urlunparse(
+                    parsed_url._replace(
+                        query=urllib.parse.urlencode(filtered_params),
+                        fragment=''
+                    )
+                )
+                self.logger.info(f"Processed URL: {processed_url}")
+                return processed_url
+            
+        except Exception as e:
+            self.logger.error(f"Error processing URL {url}: {e}")
+            return url
+
+    
     def process_links(self, text):
-        url_regex = r'https?://\S+'
+        if any(x in text.lower() for x in ["t.me/", "telegram.me/", "/telegram"]):
+            return None        
+        url_regex = r'(?:https?:\/\/)?(?:www\.)?(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,}(?:\/[^\s]*)?'
         urls = re.findall(url_regex, text)
+        
+        self.logger.info(f"Found URLs: {urls}")
         
         for url in urls:
             full_url = url if url.startswith('http') else f'https://{url}'
-            resolved_url = self.get_actual_url_with_selenium(full_url)
+            processed_url = self.process_url(full_url)
             
-            if resolved_url:
-                processed_url = self.process_url(resolved_url)
-                # Only shorten if it's Amazon or Flipkart
-                parsed_url = urllib.parse.urlparse(processed_url)
-                domain = parsed_url.netloc.replace('www.', '')
-                print(f"Domain: {domain}")
-                if any(domain.endswith(site) for site in ('amazon.com', 'flipkart.com')):
-                    shortened_url = self.shorten_url(processed_url)
-                    text = text.replace(url, shortened_url)
-                else:
-                    text = text.replace(url, processed_url)
+            if processed_url != full_url:  # Only shorten if URL was processed
+                shortened_url = self.shorten_url(processed_url)
+                self.logger.info(f"Shortened to: {shortened_url}")
+                text = text.replace(url, shortened_url)
         
         return text
 
+    def shorten_url(self, long_url):
+            try:
+                response = requests.post(
+                    "http://152.67.30.229/shorten",
+                    json={"url": long_url}
+                )
+                # print(response.json())
+                return f"http://152.67.30.229{response.json()['short_url']}"
+            except Exception as e:
+                self.logger.error(f"URL Shortening Error: {e}")
+                return long_url
+
+
     def send_telegram_message(self, message):
-        # Find URLs in the message
-        url_pattern = r'(http[s]?://\S+)'
-        urls = re.findall(url_pattern, message)
-        
-        # Replace URLs with HTML formatted links
-        formatted_message = message
-        for url in urls:
-            html_link = f'{url}'
-            formatted_message = formatted_message.replace(url, html_link)
-        
-        url = f"https://api.telegram.org/bot{self.bot_token}/sendMessage"
-        params = {
-            'chat_id': self.target_channel,
-            'text': formatted_message,
-            'parse_mode': 'HTML',
-            'disable_web_page_preview': False
-        }
-        return requests.post(url, params=params).json()
+        try:
+            # Ensure message is a string
+            message_text = str(message)
+            
+            # Find URLs in the message
+            url_pattern = r'(http[s]?://\S+)'
+            urls = re.findall(url_pattern, message_text)
+            self.logger.info(f"Found URLs: {urls}")
+            
+            # Replace URLs with HTML formatted links
+            formatted_message = message_text
+            for url in urls:
+                html_link = f'{url}'
+                formatted_message = formatted_message.replace(url, html_link)
+            
+            print(formatted_message);
+            exit()
+            url = f"https://api.telegram.org/bot{self.bot_token}/sendMessage"
+            params = {
+                'chat_id': self.target_channel,
+                'text': formatted_message,
+                'parse_mode': 'HTML',
+                'disable_web_page_preview': False
+            }
+            response = requests.post(url, params=params).json()
+            self.logger.info(f"Telegram API response: {response}")
+            return response
+        except Exception as e:
+            self.logger.error(f"Error in send_telegram_message: {e}")
+            return None
 
 
     def post_to_facebook(self, message, media_path=None):
@@ -205,9 +289,10 @@ class MultiChannelTelegramBot:
 
                     # Process and forward the message
                     if message.text:
-                        if any(x in message.text for x in ["https://t.me/", "https://telegram", "telegram.me"]):
-                            continue
                         processed_text = self.process_links(message.text)
+                        if processed_text is None:  # Skip messages with Telegram URLs
+                            continue
+                            
                         recent_messages = await client.get_messages(self.main_group, limit=10)
                         if all(msg.text != processed_text for msg in recent_messages if msg.text):
                             self.send_telegram_message(processed_text)
@@ -232,9 +317,10 @@ if __name__ == '__main__':
     
     if len(sys.argv) > 1 and sys.argv[1] == 'test':
         # Test post functionality
-        # test_message = "**✨ Trending Styles For Men**⚡ Min. 40% off+ Extra 5% offView offer 👉 https://ajiio.in/HJQhHyn"
+        # test_message = "**✨ Trending Styles For Men**⚡ Min. 40% off+ Extra 5% offView offer 👉 https://www.ajio.com/s/40-to-80-percent-off-5399-784712"
         # test_message = "Safari Laptop Backpack Starts at Rs.445. https://fkrt.cc/EDRTbr"
-        test_message = "**Myntra**: Aristocrat hard trolleys starting @1499 https://linkredirect.in/visitretailer/2111?id=1962507&shareid=UbJui72&dl=https%3A%2F%2Fwww.myntra.com%2Faristocrat-trolley%3Ff%3DBag%2520Type%253ASuitcase%26rawQuery%3DAristocrat%2520Trolley%26rf%3DPrice%253A1400.0_28100.0_1400.0%2520TO%252028100.0%26sort%3Dprice_asc"
+        # test_message = "**Myntra**: Aristocrat hard trolleys starting @1499 https://linkredirect.in/visitretailer/2111?id=1962507&shareid=UbJui72&dl=https%3A%2F%2Fwww.myntra.com%2Faristocrat-trolley%3Ff%3DBag%2520Type%253ASuitcase%26rawQuery%3DAristocrat%2520Trolley%26rf%3FPrice%253A1400.0_28100.0_1400.0%2520TO%252028100.0%26sort%3Dprice_asc"
+        test_message = "**💖 Get Date-Ready This Valentine's! 💖 **🔥 Bestselling Trimmers, Hairdryers, Straighteners & More for a Perfect Look! ✨ Up to 60% Off | 🚚 Top Brands, Fast Delivery 👉 blinks.to/oJGc604"
         processed_message = bot.process_links(test_message)
         # print(f"Processed message: {processed_message}")
         bot.send_telegram_message(processed_message)
