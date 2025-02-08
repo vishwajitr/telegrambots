@@ -231,8 +231,7 @@ class MultiChannelTelegramBot:
                 html_link = f'{url}'
                 formatted_message = formatted_message.replace(url, html_link)
             
-            print(formatted_message);
-            exit()
+            
             url = f"https://api.telegram.org/bot{self.bot_token}/sendMessage"
             params = {
                 'chat_id': self.target_channel,
