@@ -54,3 +54,6 @@ mongodb+srv://vishwajit:b77g7WDKOoWRPiHe@cluster0.oimfhfg.mongodb.net/
 
 to restart when url shhortner api changes
 https://gist.github.com/priyanshu-panwar/f479a70ec6216db0681290edb54f1920
+
+To push files to server
+scp -r crawlernew/* offersapp6:/home/ubuntu/socialshare
