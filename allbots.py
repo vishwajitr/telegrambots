@@ -247,14 +247,85 @@ class MultiChannelTelegramBot:
             return None
 
 
+    def process_facebook_url(self, url):
+        """
+        Process a URL for Facebook posts to ensure proper attribution for affiliate links.
+        """
+        try:
+            self.logger.info(f"Processing URL: {url}")
+            
+            url = url.strip()
+            # Basic URL validation and formatting
+            if not url:
+                return url
+                
+            if not url.startswith(('http://', 'https://')):
+                if url.startswith('//'):
+                    url = f"https:{url}"
+                else:
+                    url = f"https://{url}"
+            
+            url_shorteners = ['blinks.to', 'fkrt.cc', 'ajiio.in', 'amzn.to']
+            
+            # Resolve shortened URLs
+            if any(shortener in url for shortener in url_shorteners):
+                try:
+                    headers = {
+                        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+                        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8'
+                    }
+                    response = requests.get(url, headers=headers, allow_redirects=True, timeout=10)
+                    if response.status_code == 200:
+                        url = response.url
+                        self.logger.info(f"URL resolved to: {url}")
+                except Exception as e:
+                    self.logger.error(f"Error resolving shortened URL {url}: {e}")
+            
+            # Parse and process URL
+            parsed_url = urllib.parse.urlparse(url)
+            domain = parsed_url.netloc.lower().replace('www.', '')
+            
+            # Extract existing query parameters
+            query_params = dict(urllib.parse.parse_qsl(parsed_url.query))
+            # Process Amazon and Flipkart URLs
+            
+            if domain not in ['amazon.in', 'amazon.com', 'flipkart.com']:
+                # Add Cuelinks parameters if available
+                if 'cuelinks' in self.affiliate_config:
+                    important_params = ['utm_source', 'utm_medium', 'utm_campaign']
+                    filtered_params = {
+                        k: v for k, v in query_params.items() 
+                        if k in important_params
+                    }
+
+                    cuelinks_params = self.affiliate_config['cuelinks'].get('fb_params', {})
+                    filtered_params.update(cuelinks_params)
+                
+                # Construct the processed URL
+                processed_url = urllib.parse.urlunparse(
+                    parsed_url._replace(
+                        query=urllib.parse.urlencode(filtered_params),
+                        fragment=''
+                    )
+                )
+            
+            self.logger.info(f"Processed Facebook URL: {processed_url}")
+            return processed_url
+
+        except Exception as e:
+            self.logger.error(f"Error processing Facebook URL {url}: {e}")
+            return url
+
     def post_to_facebook(self, message, media_path=None):
         try:
+            processed_message = self.process_facebook_url(message)
+            print(f"111: {processed_message}")
             graph = facebook.GraphAPI(access_token=self.facebook_token)
             if media_path:
                 with open(media_path, 'rb') as image:
-                    graph.put_photo(image=image, message=message, album_path=f"{self.facebook_page_id}/photos")
+                    graph.put_photo(image=image, message=processed_message, album_path=f"{self.facebook_page_id}/photos")
             else:
-                graph.put_object(parent_object=self.facebook_page_id, connection_name='feed', message=message)
+                graph.put_object(parent_object=self.facebook_page_id, connection_name='feed', message=processed_message)
             self.logger.info("Message posted to Facebook successfully")
         except Exception as e:
             self.logger.error(f"Facebook Posting Error: {e}")
@@ -316,13 +387,13 @@ if __name__ == '__main__':
     
     if len(sys.argv) > 1 and sys.argv[1] == 'test':
         # Test post functionality
-        # test_message = "**✨ Trending Styles For Men**⚡ Min. 40% off+ Extra 5% offView offer 👉 https://www.ajio.com/s/40-to-80-percent-off-5399-784712"
+        test_message = "**✨ Trending Styles For Men**⚡ Min. 40% off+ Extra 5% offView offer 👉 https://www.ajio.com/s/40-to-80-percent-off-5399-784712"
         # test_message = "Safari Laptop Backpack Starts at Rs.445. https://fkrt.cc/EDRTbr"
         # test_message = "**Myntra**: Aristocrat hard trolleys starting @1499 https://linkredirect.in/visitretailer/2111?id=1962507&shareid=UbJui72&dl=https%3A%2F%2Fwww.myntra.com%2Faristocrat-trolley%3Ff%3DBag%2520Type%253ASuitcase%26rawQuery%3DAristocrat%2520Trolley%26rf%3FPrice%253A1400.0_28100.0_1400.0%2520TO%252028100.0%26sort%3Dprice_asc"
-        test_message = "**💖 Get Date-Ready This Valentine's! 💖 **🔥 Bestselling Trimmers, Hairdryers, Straighteners & More for a Perfect Look! ✨ Up to 60% Off | 🚚 Top Brands, Fast Delivery 👉 blinks.to/oJGc604"
-        processed_message = bot.process_links(test_message)
+        # test_message = "**💖 Get Date-Ready This Valentine's! 💖 **🔥 Bestselling Trimmers, Hairdryers, Straighteners & More for a Perfect Look! ✨ Up to 60% Off | 🚚 Top Brands, Fast Delivery 👉 blinks.to/oJGc604"
+        processed_message = bot.process_facebook_url(test_message)
         # print(f"Processed message: {processed_message}")
-        bot.send_telegram_message(processed_message)
+        # bot.send_telegram_message(processed_message)
         bot.post_to_facebook(processed_message)
         asyncio.run(bot.post_to_instagram(processed_message, None))
         print("Test posts sent to all platforms")

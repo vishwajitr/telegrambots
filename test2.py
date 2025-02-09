@@ -1,63 +1,74 @@
 from selenium import webdriver
-from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.common.exceptions import TimeoutException, NoSuchElementException
+from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.chrome.options import Options
+import json
 import time
+from datetime import datetime
 
-def scrape_telegram_user_data(channel_username):
-    chrome_options = Options()
-    # Comment out headless to debug visually
-    # chrome_options.add_argument('--headless')
-    chrome_options.add_argument('--disable-gpu')
-    chrome_options.add_argument('--no-sandbox')
-    chrome_options.add_argument('--window-size=1920,1080')  # Ensures proper rendering
-    chrome_options.add_argument('--disable-blink-features=AutomationControlled')  # Bypass detection
+# Set up Chrome options
+chrome_options = Options()
+chrome_options.add_argument("--start-maximized")  # Start maximized
+chrome_options.add_argument("--disable-infobars")  # Disable info bars
+chrome_options.add_argument("--disable-extensions")  # Disable extensions
+
+# Path to your ChromeDriver
+webdriver_service = Service('/path/to/chromedriver')  # Update this path
+
+def process_users():
+    # Load user data
+    with open('users.json', 'r', encoding='utf-8') as f:
+        users = json.load(f)
+
+    print(f"Loaded {len(users)} users from JSON file")
     
-    chrome_options.add_argument("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36")
+    # Create log file
+    log_file = f'usernames_{datetime.now().strftime("%Y%m%d_%H%M%S")}.txt'
+    
+    # Initialize the WebDriver
+    driver = webdriver.Chrome(service=webdriver_service, options=chrome_options)
 
-
-    driver = webdriver.Chrome(options=chrome_options)
-    wait = WebDriverWait(driver, 15)
-
-    try:
-        channel_url = f"https://t.me/s/{channel_username.replace('@', '')}"
-        driver.get(channel_url)
-        wait.until(EC.presence_of_element_located((By.TAG_NAME, 'body')))
-
+    for index, user in enumerate(users, 1):
+        peer_id = user['peerId']
+        current_name = user['name']
         
-        # Scroll to load content
-        driver = webdriver.Chrome(options=chrome_options)
-        # time.sleep(2)  # Allow lazy-loaded content to appear
+        # Generate Telegram web URL
+        web_url = f"https://web.telegram.org/k/#{peer_id}"
+        
+        print(f"\n[{index}/{len(users)}]")
+        print(f"Opening: {current_name} (ID: {peer_id})")
+        
+        # Open link in browser
+        driver.get(web_url)
+        time.sleep(5)  # Wait for the page to load
 
-        # Scraping user data
-        user_data = {
-            'channel_name': wait.until(EC.presence_of_element_located((By.CLASS_NAME, "tgme_channel_info_header_title"))).text,
-            'subscribers': wait.until(EC.presence_of_element_located((By.CLASS_NAME, "tgme_channel_info_counter_value"))).text,
-            'description': driver.find_element(By.CLASS_NAME, "tgme_channel_info_description").text if driver.find_elements(By.CLASS_NAME, "tgme_channel_info_description") else "No description available",
-            'photo_url': driver.find_element(By.CLASS_NAME, "tgme_page_photo_image").get_attribute("src") if driver.find_elements(By.CLASS_NAME, "tgme_page_photo_image") else "No photo available"
-        }
-        print(user_data)
+        # Try to find the username in the sidebar
+        try:
+            # Wait for the username to be visible
+            username_element = driver.find_element(By.XPATH, "//div[@class='tgme_username']")
+            username = username_element.text.strip()
+            print(f"✅ Found username: @{username}")
 
-    except (TimeoutException, NoSuchElementException) as e:
-        print(f"Error fetching data: {e}")
-        user_data = {}
+            # Log the information
+            with open(log_file, 'a', encoding='utf-8') as f:
+                f.write(f"PeerID: {peer_id}\n")
+                f.write(f"Name: {current_name}\n")
+                f.write(f"Username: @{username}\n")
+                f.write("-" * 30 + "\n")
+        except Exception as e:
+            print(f"❌ Could not find username for {current_name}: {str(e)}")
+            with open(log_file, 'a', encoding='utf-8') as f:
+                f.write(f"PeerID: {peer_id}\n")
+                f.write(f"Name: {current_name}\n")
+                f.write(f"Username: SKIPPED\n")
+                f.write("-" * 30 + "\n")
 
-    finally:
-        driver.quit()
+        # Small delay before next user
+        time.sleep(2)
 
-    return user_data
+    print(f"\nCompleted! Check {log_file} for usernames.")
+    driver.quit()  # Close the browser
 
-# Example usage
-channel_username = "offers_flipkart"
-user_info = scrape_telegram_user_data(channel_username)
-
-if user_info:
-    print("Channel Info:")
-    print(f"Name: {user_info.get('channel_name', 'N/A')}")
-    print(f"Subscribers: {user_info.get('subscribers', 'N/A')}")
-    print(f"Description: {user_info.get('description', 'N/A')}")
-    print(f"Profile Photo URL: {user_info.get('photo_url', 'N/A')}")
-else:
-    print("Failed to retrieve channel information.")
+if __name__ == '__main__':
+    print("Starting the program...")
+    process_users()
