@@ -317,6 +317,23 @@ class MultiChannelTelegramBot:
             self.logger.error(f"Error processing Facebook URL {url}: {e}")
             return url
 
+
+    def process_links_fb(self, text):
+        url_regex = r'(?:https?:\/\/)?(?:www\.)?(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,}(?:\/[^\s]*)?'
+        urls = re.findall(url_regex, text)
+        
+        self.logger.info(f"Found URLs for Facebook: {urls}")
+        
+        for url in urls:
+            full_url = url if url.startswith('http') else f'https://{url}'
+            processed_url = self.process_facebook_url(full_url)
+            
+            if processed_url != full_url:
+                text = text.replace(url, processed_url)
+        
+        return text
+
+
     def post_to_facebook(self, message, media_path=None):
         try:
             processed_message = self.process_links_fb(message)
