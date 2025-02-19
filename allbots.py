@@ -8,7 +8,6 @@ import requests
 from telethon import TelegramClient
 from telethon.sessions import StringSession
 from telethon.tl.types import MessageMediaPhoto
-from selenium import webdriver
 import facebook
 from instagrapi import Client
 from datetime import datetime
@@ -255,6 +254,7 @@ class MultiChannelTelegramBot:
             self.logger.info(f"Processing URL: {url}")
             
             url = url.strip()
+            
             # Basic URL validation and formatting
             if not url:
                 return url
@@ -264,6 +264,7 @@ class MultiChannelTelegramBot:
                     url = f"https:{url}"
                 else:
                     url = f"https://{url}"
+            
             
             url_shorteners = ['blinks.to', 'fkrt.cc', 'ajiio.in', 'amzn.to']
             
@@ -318,8 +319,7 @@ class MultiChannelTelegramBot:
 
     def post_to_facebook(self, message, media_path=None):
         try:
-            processed_message = self.process_facebook_url(message)
-            print(f"111: {processed_message}")
+            processed_message = self.process_links_fb(message)
             graph = facebook.GraphAPI(access_token=self.facebook_token)
             if media_path:
                 with open(media_path, 'rb') as image:
@@ -391,11 +391,12 @@ if __name__ == '__main__':
         # test_message = "Safari Laptop Backpack Starts at Rs.445. https://fkrt.cc/EDRTbr"
         # test_message = "**Myntra**: Aristocrat hard trolleys starting @1499 https://linkredirect.in/visitretailer/2111?id=1962507&shareid=UbJui72&dl=https%3A%2F%2Fwww.myntra.com%2Faristocrat-trolley%3Ff%3DBag%2520Type%253ASuitcase%26rawQuery%3DAristocrat%2520Trolley%26rf%3FPrice%253A1400.0_28100.0_1400.0%2520TO%252028100.0%26sort%3Dprice_asc"
         # test_message = "**💖 Get Date-Ready This Valentine's! 💖 **🔥 Bestselling Trimmers, Hairdryers, Straighteners & More for a Perfect Look! ✨ Up to 60% Off | 🚚 Top Brands, Fast Delivery 👉 blinks.to/oJGc604"
-        processed_message = bot.process_facebook_url(test_message)
+        test_message = bot.process_links(test_message)
+        # test_message = bot.process_facebook_url(test_message)
         # print(f"Processed message: {processed_message}")
-        # bot.send_telegram_message(processed_message)
-        bot.post_to_facebook(processed_message)
-        asyncio.run(bot.post_to_instagram(processed_message, None))
+        bot.send_telegram_message(test_message)
+        bot.post_to_facebook(test_message)
+        asyncio.run(bot.post_to_instagram(test_message, None))
         print("Test posts sent to all platforms")
     else:
         # Normal continuous operation
