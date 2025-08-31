@@ -183,8 +183,12 @@ class MultiChannelTelegramBot:
 
     
     def process_links(self, text):
-        if any(x in text.lower() for x in ["t.me/", "telegram.me/", "/telegram"]):
-            return None        
+        # More specific Telegram URL filtering - only block actual Telegram invite links
+        telegram_patterns = ["t.me/joinchat", "t.me/+", "telegram.me/joinchat"]
+        if any(pattern in text.lower() for pattern in telegram_patterns):
+            self.logger.info(f"Skipping message with Telegram invite link: {text[:100]}...")
+            return None
+        
         url_regex = r'(?:https?:\/\/)?(?:www\.)?(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,}(?:\/[^\s]*)?'
         urls = re.findall(url_regex, text)
         
@@ -195,23 +199,31 @@ class MultiChannelTelegramBot:
             processed_url = self.process_url(full_url)
             
             if processed_url != full_url:  # Only shorten if URL was processed
+                self.logger.info(f"About to shorten URL: {processed_url}")
                 shortened_url = self.shorten_url(processed_url)
                 self.logger.info(f"Shortened to: {shortened_url}")
                 text = text.replace(url, shortened_url)
+            else:
+                self.logger.info(f"URL not processed, keeping original: {url}")
         
+        self.logger.info(f"Final processed text: {text}")
         return text
 
     def shorten_url(self, long_url):
-            try:
-                response = requests.post(
-                    "http://152.67.30.229/shorten",
-                    json={"url": long_url}
-                )
-                # print(response.json())
-                return f"http://152.67.30.229{response.json()['short_url']}"
-            except Exception as e:
-                self.logger.error(f"URL Shortening Error: {e}")
-                return long_url
+        try:
+            self.logger.info(f"Attempting to shorten: {long_url}")
+            response = requests.post(
+                "http://152.67.30.229/shorten",
+                json={"url": long_url},
+                timeout=10  # Add timeout
+            )
+            self.logger.info(f"Shortener response status: {response.status_code}")
+            result = f"http://152.67.30.229{response.json()['short_url']}"
+            self.logger.info(f"Shortener result: {result}")
+            return result
+        except Exception as e:
+            self.logger.error(f"URL Shortening Error: {e}")
+            return long_url
 
 
     def send_telegram_message(self, message):
@@ -358,31 +370,52 @@ class MultiChannelTelegramBot:
     async def main(self):
         client = TelegramClient('session', self.api_id, self.api_hash)
         await client.start()
+        
+        self.logger.info(f"Bot started. Monitoring channels: {self.channels}")
+        self.logger.info(f"Target channel: {self.target_channel}")
 
         while True:
             for channel in self.channels:
                 try:
+                    self.logger.info(f"Checking channel: {channel}")
                     entity = await client.get_entity(channel)
-                    messages = await client.get_messages(entity, limit=1)
+                    messages = await client.get_messages(entity, limit=5)  # Get more messages for debugging
+                    
                     if not messages:
+                        self.logger.info(f"No messages found in {channel}")
                         continue
+                        
                     message = messages[0]
+                    self.logger.info(f"Latest message ID in {channel}: {message.id}")
+                    self.logger.info(f"Last processed message ID: {self.last_messages.get(channel)}")
+                    
                     if self.last_messages.get(channel) == message.id:
+                        self.logger.info(f"Message {message.id} already processed for {channel}")
                         continue
 
                     # Update last message ID
                     self.last_messages[channel] = message.id
                     self.save_last_messages()
+                    self.logger.info(f"Updated last message ID for {channel} to {message.id}")
 
                     # Process and forward the message
                     if message.text:
+                        self.logger.info(f"Processing message text: {message.text[:100]}...")
                         processed_text = self.process_links(message.text)
+                        
                         if processed_text is None:  # Skip messages with Telegram URLs
+                            self.logger.info("Message skipped due to Telegram URL filtering")
                             continue
+                        
+                        # Reduce duplicate check to last 3 messages instead of 10
+                        recent_messages = await client.get_messages(self.main_group, limit=3)
+                        is_duplicate = any(msg.text == processed_text for msg in recent_messages if msg.text)
+                        
+                        if not is_duplicate:
+                            self.logger.info(f"Sending message to Telegram: {processed_text[:100]}...")
+                            response = self.send_telegram_message(processed_text)
+                            self.logger.info(f"Telegram response: {response}")
                             
-                        recent_messages = await client.get_messages(self.main_group, limit=10)
-                        if all(msg.text != processed_text for msg in recent_messages if msg.text):
-                            self.send_telegram_message(processed_text)
                             if isinstance(message.media, MessageMediaPhoto):
                                 media_path = await self.download_media(message)
                                 if media_path:
@@ -391,10 +424,17 @@ class MultiChannelTelegramBot:
                                     os.remove(media_path)
                             else:
                                 self.post_to_facebook(processed_text)
+                        else:
+                            self.logger.info("Message skipped - duplicate detected in recent messages")
+                    else:
+                        self.logger.info("Message has no text content")
 
                 except Exception as e:
                     self.logger.error(f"Error processing channel {channel}: {e}")
+                    import traceback
+                    self.logger.error(traceback.format_exc())
 
+            self.logger.info("Sleeping for 15 minutes...")
             await asyncio.sleep(900)
 
 
